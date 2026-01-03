@@ -21,6 +21,6 @@ Antes de executar o projeto, certifique-se de ter os seguintes itens instalados 
 
 - Login usuário Admin (Permissão de cadastro, votação e consulta) 
 - Login usuário (Permissão de votação e consulta)
-- Cadastro de jogadores
+- Crud de jogadores (Acesso Admin)
 - Votação de jogadores
 - Consulta de jogadores mais votados
