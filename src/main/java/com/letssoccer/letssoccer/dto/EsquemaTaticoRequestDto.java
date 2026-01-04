@@ -11,7 +11,7 @@ public record EsquemaTaticoRequestDto(
 
 ) {
     @AssertTrue(message = "Ao menos um esquema tático deve ser selecionado")
-    public boolean isAlgumSelecionado() {
+    public boolean esquemaSelecionado() {
         return esquema442 || esquema352 || esquema541 || esquema244;
     }
 }

@@ -9,5 +9,7 @@ public class KeyMessages {
     public static final String JOGADOR_NAO_ENCONTRADO= "Jogador não encontrado";
     public static final String NAO_PERMITE_EXCLUSAO_CLUBE_COM_JOGADOR= "Não é possível excluir clubes pois existem jogadores vinculados.";
     public static final String DUPLICIDADE_NOME_JOGADOR= "Já existe um jogador com este nome neste clube.";
+    public static final String OBRIGATORIEDADE_ESQUEMA= "É obrigatório selecionar um esquema tático.";
+    public static final String VALIDADE_DE_ESQUEMA= "Selecione apenas um esquema tático.";
 
 }

@@ -47,12 +47,22 @@ public class EsquemaTaticoService {
     }
 
     private String obterEsquemaSelecionado(EsquemaTaticoRequestDto dto) {
+        int quantidadeSelecionados = 0;
+
+        if (dto.esquema442()) quantidadeSelecionados++;
+        if (dto.esquema352()) quantidadeSelecionados++;
+        if (dto.esquema541()) quantidadeSelecionados++;
+        if (dto.esquema244()) quantidadeSelecionados++;
+
+        if (quantidadeSelecionados == 0) {
+            throw new BadRequestException(KeyMessages.OBRIGATORIEDADE_ESQUEMA);
+        }
+        if (quantidadeSelecionados > 1) {
+            throw new BadRequestException(KeyMessages.VALIDADE_DE_ESQUEMA);
+        }
         if (dto.esquema442()) return "4-4-2";
         if (dto.esquema352()) return "3-5-2";
         if (dto.esquema541()) return "5-4-1";
-        if (dto.esquema244()) return "2-4-4";
-        throw new BadRequestException("Nenhum esquema tático selecionado");
+        return "2-4-4";
     }
-
-
 }
