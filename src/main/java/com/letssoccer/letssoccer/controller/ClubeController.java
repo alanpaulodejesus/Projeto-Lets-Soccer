@@ -1,10 +1,12 @@
 package com.letssoccer.letssoccer.controller;
 
+import com.letssoccer.letssoccer.dto.ClubeDetalhadoResponseDto;
 import com.letssoccer.letssoccer.dto.ClubeRequestDto;
 import com.letssoccer.letssoccer.dto.ClubeResponseDto;
 import com.letssoccer.letssoccer.service.ClubeService;
+import com.letssoccer.letssoccer.messages.sucess.MessageResponseDto;
+import com.letssoccer.letssoccer.messages.sucess.SuccessMessages;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,15 +52,31 @@ public class ClubeController {
         return ResponseEntity.ok(atualizado);
     }
 
-    //@DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarClube(@PathVariable Integer id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<MessageResponseDto> deletarClube(@PathVariable Integer id) {
         clubeService.deletarClube(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(
+                new MessageResponseDto(SuccessMessages.CLUBE_EXCLUIDO)
+        );
+        //return ResponseEntity.noContent().build();
     }
 
-    //@DeleteMapping()
-    public ResponseEntity<Void> deletarClubes() {
+    @DeleteMapping()
+    public ResponseEntity<MessageResponseDto> deletarClubes() {
         clubeService.deletarClubes();
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(
+                new MessageResponseDto(SuccessMessages.CLUBES_EXCLUIDOS)
+        );
+        //return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}/detalhado")
+    public ResponseEntity<ClubeDetalhadoResponseDto> buscarClubeDetalhado(
+            @PathVariable Integer id) {
+
+        return ResponseEntity.ok(
+                clubeService.buscarClubeDetalhado(id)
+        );
+    }
+
 }

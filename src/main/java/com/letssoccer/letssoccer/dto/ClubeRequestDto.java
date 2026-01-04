@@ -1,6 +1,6 @@
 package com.letssoccer.letssoccer.dto;
 
-import com.letssoccer.letssoccer.exception.KeyMessages;
+import com.letssoccer.letssoccer.messages.exception.KeyMessages;
 import jakarta.validation.constraints.NotBlank;
 
 public record ClubeRequestDto(@NotBlank (message = KeyMessages.NOME_CLUBE_OBRIGATORIO)

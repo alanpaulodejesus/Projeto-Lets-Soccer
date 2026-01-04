@@ -3,6 +3,10 @@ package com.letssoccer.letssoccer.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Entity
 @Table(name = "clube")
 public class ClubeEntities {
@@ -14,6 +18,13 @@ public class ClubeEntities {
     private String nome;
     @NotNull
     private String informacao;
+
+    @OneToMany(
+            mappedBy = "clube",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<JogadorEntity> jogadores = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -34,8 +45,15 @@ public class ClubeEntities {
     public String getInformacao() {
         return informacao;
     }
-
     public void setInformacao(String informacao) {
         this.informacao = informacao;
+    }
+
+    public List<JogadorEntity> getJogadores() {
+        return jogadores;
+    }
+
+    public void setJogadores(List<JogadorEntity> jogadores) {
+        this.jogadores = jogadores;
     }
 }

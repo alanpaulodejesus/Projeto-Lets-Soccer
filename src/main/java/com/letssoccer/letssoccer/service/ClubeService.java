@@ -1,11 +1,12 @@
 package com.letssoccer.letssoccer.service;
 
+import com.letssoccer.letssoccer.dto.ClubeDetalhadoResponseDto;
 import com.letssoccer.letssoccer.dto.ClubeRequestDto;
 import com.letssoccer.letssoccer.dto.ClubeResponseDto;
 import com.letssoccer.letssoccer.entities.ClubeEntities;
-import com.letssoccer.letssoccer.exception.BadRequestException;
-import com.letssoccer.letssoccer.exception.KeyMessages;
-import com.letssoccer.letssoccer.exception.NotFoundException;
+import com.letssoccer.letssoccer.messages.exception.BadRequestException;
+import com.letssoccer.letssoccer.messages.exception.KeyMessages;
+import com.letssoccer.letssoccer.messages.exception.NotFoundException;
 import com.letssoccer.letssoccer.mappers.ClubeMapper;
 import com.letssoccer.letssoccer.repositories.ClubeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,9 +75,23 @@ public class ClubeService {
     }
 
     public void deletarClube(Integer id) {
-
+        if (!clubeRepository.existsById(id)) {
+            throw new NotFoundException("Clube com ID " + id + " não encontrado.");
+        }
+        clubeRepository.deleteById(id);
     }
 
     public void deletarClubes() {
+        clubeRepository.deleteAll();
     }
+
+    public ClubeDetalhadoResponseDto buscarClubeDetalhado(Integer id) {
+
+        ClubeEntities clube = clubeRepository.findByIdWithJogadores(id)
+                .orElseThrow(() ->
+                        new NotFoundException(KeyMessages.CLUBE_NAO_ENCONTRADO));
+
+        return ClubeMapper.toDetalhadoDto(clube);
+    }
+
 }
