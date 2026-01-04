@@ -9,6 +9,7 @@ import com.letssoccer.letssoccer.messages.exception.KeyMessages;
 import com.letssoccer.letssoccer.messages.exception.NotFoundException;
 import com.letssoccer.letssoccer.mappers.ClubeMapper;
 import com.letssoccer.letssoccer.repositories.ClubeRepository;
+import com.letssoccer.letssoccer.repositories.JogadorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -20,6 +21,8 @@ import java.util.stream.Collectors;
 public class ClubeService {
     @Autowired
     private ClubeRepository clubeRepository;
+    @Autowired
+    private JogadorRepository jogadorRepository;
     public ClubeResponseDto criarClube(ClubeRequestDto clubeRequestDto) {
 
         if (!StringUtils.hasText(clubeRequestDto.nome())) {
@@ -75,22 +78,29 @@ public class ClubeService {
     }
 
     public void deletarClube(Integer id) {
-        if (!clubeRepository.existsById(id)) {
-            throw new NotFoundException("Clube com ID " + id + " não encontrado.");
+        ClubeEntities clube = clubeRepository.findByIdWithJogadores(id)
+                .orElseThrow(() ->
+                        new NotFoundException("Clube com ID " + id + " não encontrado.")
+                );
+        if (clube.getJogadores() != null && !clube.getJogadores().isEmpty()) {
+            throw new BadRequestException(
+                    KeyMessages.NAO_PERMITE_EXCLUSAO_CLUBE_COM_JOGADOR);
         }
         clubeRepository.deleteById(id);
     }
 
     public void deletarClubes() {
+            if (jogadorRepository.count() > 0) {
+                throw new BadRequestException(
+                        KeyMessages.NAO_PERMITE_EXCLUSAO_CLUBE_COM_JOGADOR);
+            }
         clubeRepository.deleteAll();
     }
 
     public ClubeDetalhadoResponseDto buscarClubeDetalhado(Integer id) {
-
         ClubeEntities clube = clubeRepository.findByIdWithJogadores(id)
                 .orElseThrow(() ->
                         new NotFoundException(KeyMessages.CLUBE_NAO_ENCONTRADO));
-
         return ClubeMapper.toDetalhadoDto(clube);
     }
 

@@ -5,6 +5,7 @@ import com.letssoccer.letssoccer.dto.JogadorResponseDto;
 import com.letssoccer.letssoccer.entities.ClubeEntities;
 import com.letssoccer.letssoccer.entities.JogadorEntity;
 import com.letssoccer.letssoccer.mappers.JogadorMapper;
+import com.letssoccer.letssoccer.messages.exception.BadRequestException;
 import com.letssoccer.letssoccer.messages.exception.KeyMessages;
 import com.letssoccer.letssoccer.messages.exception.NotFoundException;
 import com.letssoccer.letssoccer.repositories.ClubeRepository;
@@ -26,12 +27,13 @@ public class JogadorService {
     public JogadorResponseDto adicionarJogador(Integer clubeId, JogadorRequestDto dto) {
 
         ClubeEntities clube = clubeRepository.findById(clubeId)
-                .orElseThrow(() -> new NotFoundException(KeyMessages.JOGADOR_NAO_ENCONTRADO));
-
+                .orElseThrow(() -> new NotFoundException(KeyMessages.CLUBE_NAO_ENCONTRADO));
+        if (jogadorRepository.existsByNomeIgnoreCaseAndClubeId(dto.nome(), clubeId)) {
+            throw new BadRequestException(
+                    KeyMessages.DUPLICIDADE_NOME_JOGADOR);
+        }
         JogadorEntity jogador = JogadorMapper.toEntity(dto, clube);
-
         JogadorEntity salvo = jogadorRepository.save(jogador);
-
         return JogadorMapper.toDto(salvo);
     }
 
@@ -45,5 +47,12 @@ public class JogadorService {
                 .stream()
                 .map(JogadorMapper::toDto)
                 .toList();
+    }
+
+    public void deletarJogador(Integer id) {
+        if (!jogadorRepository.existsById(id)) {
+            throw new NotFoundException("Jogador com ID " + id + " não encontrado.");
+        }
+        jogadorRepository.deleteById(id);
     }
 }

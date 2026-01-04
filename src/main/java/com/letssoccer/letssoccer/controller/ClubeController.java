@@ -45,7 +45,6 @@ public class ClubeController {
     public ResponseEntity<ClubeResponseDto> atualizarClube (
             @PathVariable Integer id,
             @RequestBody @Valid ClubeRequestDto clubeRequestDto) throws Exception {
-
         ClubeResponseDto atualizado =
                 clubeService.atualizarClube(id, clubeRequestDto);
 
@@ -58,7 +57,6 @@ public class ClubeController {
         return ResponseEntity.ok(
                 new MessageResponseDto(SuccessMessages.CLUBE_EXCLUIDO)
         );
-        //return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping()
@@ -67,13 +65,11 @@ public class ClubeController {
         return ResponseEntity.ok(
                 new MessageResponseDto(SuccessMessages.CLUBES_EXCLUIDOS)
         );
-        //return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/detalhado")
     public ResponseEntity<ClubeDetalhadoResponseDto> buscarClubeDetalhado(
             @PathVariable Integer id) {
-
         return ResponseEntity.ok(
                 clubeService.buscarClubeDetalhado(id)
         );

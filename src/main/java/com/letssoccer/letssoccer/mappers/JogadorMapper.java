@@ -1,6 +1,5 @@
 package com.letssoccer.letssoccer.mappers;
 
-import com.letssoccer.letssoccer.dto.ClubeDetalhadoResponseDto;
 import com.letssoccer.letssoccer.dto.JogadorRequestDto;
 import com.letssoccer.letssoccer.dto.JogadorResponseDto;
 import com.letssoccer.letssoccer.entities.ClubeEntities;

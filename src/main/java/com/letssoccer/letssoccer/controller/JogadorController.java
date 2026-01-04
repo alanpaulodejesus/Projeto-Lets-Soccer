@@ -2,6 +2,8 @@ package com.letssoccer.letssoccer.controller;
 
 import com.letssoccer.letssoccer.dto.JogadorRequestDto;
 import com.letssoccer.letssoccer.dto.JogadorResponseDto;
+import com.letssoccer.letssoccer.messages.sucess.MessageResponseDto;
+import com.letssoccer.letssoccer.messages.sucess.SuccessMessages;
 import com.letssoccer.letssoccer.service.JogadorService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +37,14 @@ public class JogadorController {
 
         return ResponseEntity.ok(
                 jogadorService.listarJogadoresDoClube(clubeId)
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<MessageResponseDto> deletarJogador(@PathVariable Integer id) {
+        jogadorService.deletarJogador(id);
+        return ResponseEntity.ok(
+                new MessageResponseDto(SuccessMessages.JOGADOR_EXCLUIDO)
         );
     }
 }
