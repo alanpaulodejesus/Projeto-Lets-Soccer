@@ -22,7 +22,7 @@ public class JogadorEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clube_id", nullable = false)
-    private ClubeEntities clube;
+    private ClubeEntity clube;
     public Integer getId() {
         return id;
     }
@@ -47,11 +47,11 @@ public class JogadorEntity {
         this.posicao = posicao;
     }
 
-    public ClubeEntities getClube() {
+    public ClubeEntity getClube() {
         return clube;
     }
 
-    public void setClube(ClubeEntities clube) {
+    public void setClube(ClubeEntity clube) {
         this.clube = clube;
     }
 

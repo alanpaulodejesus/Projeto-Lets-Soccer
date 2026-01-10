@@ -2,34 +2,53 @@ package com.letssoccer.letssoccer.entities;
 
 import com.letssoccer.letssoccer.service.Perfil;
 import jakarta.persistence.*;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
-@Table(name = "usuarios",
-        uniqueConstraints = @UniqueConstraint(columnNames = "email"))
-public class UsuarioEntity  implements UserDetails {
+@Table(
+        name = "usuarios",
+        uniqueConstraints = @UniqueConstraint(columnNames = "email")
+)
+public class UsuarioEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+
     private String nome;
 
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String senha;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Perfil perfil;
 
     private boolean ativo = true;
+
+    @ManyToOne
+    @JoinColumn(name = "clube_id")
+    private ClubeEntity clube;
+
+    // ===== UserDetails =====
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(
+                new SimpleGrantedAuthority("ROLE_" + perfil.name())
+        );
+    }
+
+    @Override
+    public String getPassword() {
+        return senha;
+    }
 
     public Long getId() {
         return id;
@@ -79,38 +98,29 @@ public class UsuarioEntity  implements UserDetails {
         this.ativo = ativo;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+    public ClubeEntity getClube() {
+        return clube;
     }
 
-    @Override
-    public @Nullable String getPassword() {
-        return null;
+    public void setClube(ClubeEntity clube) {
+        this.clube = clube;
     }
 
     @Override
     public String getUsername() {
-        return null;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return email;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return ativo;
     }
+
+    @Override public boolean isAccountNonExpired() { return true; }
+    @Override public boolean isAccountNonLocked() { return true; }
+    @Override public boolean isCredentialsNonExpired() { return true; }
+
+    // ===== getters e setters =====
+
+
 }

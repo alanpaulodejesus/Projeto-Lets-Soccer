@@ -3,26 +3,26 @@ package com.letssoccer.letssoccer.mappers;
 import com.letssoccer.letssoccer.dto.ClubeDetalhadoResponseDto;
 import com.letssoccer.letssoccer.dto.ClubeRequestDto;
 import com.letssoccer.letssoccer.dto.ClubeResponseDto;
-import com.letssoccer.letssoccer.entities.ClubeEntities;
+import com.letssoccer.letssoccer.entities.ClubeEntity;
 
 public class ClubeMapper {
 
-    public static ClubeEntities toClubeEntity(ClubeRequestDto dto){
-        ClubeEntities clubeEntities = new ClubeEntities();
-        clubeEntities.setNome(dto.nome());
-        clubeEntities.setInformacao(dto.informacao());
-        return clubeEntities;
+    public static ClubeEntity toClubeEntity(ClubeRequestDto dto){
+        ClubeEntity clubeEntity = new ClubeEntity();
+        clubeEntity.setNome(dto.nome());
+        clubeEntity.setInformacao(dto.informacao());
+        return clubeEntity;
     }
 
-    public static ClubeResponseDto toClubeResponseDTO(ClubeEntities clubeEntities) {
+    public static ClubeResponseDto toClubeResponseDTO(ClubeEntity clubeEntity) {
         return new ClubeResponseDto(
-                clubeEntities.getId(),
-                clubeEntities.getNome(),
-                clubeEntities.getInformacao()
+                clubeEntity.getId(),
+                clubeEntity.getNome(),
+                clubeEntity.getInformacao()
         );
     }
 
-    public static ClubeDetalhadoResponseDto toDetalhadoDto(ClubeEntities entity) {
+    public static ClubeDetalhadoResponseDto toDetalhadoDto(ClubeEntity entity) {
         return new ClubeDetalhadoResponseDto(
                 entity.getId(),
                 entity.getNome(),

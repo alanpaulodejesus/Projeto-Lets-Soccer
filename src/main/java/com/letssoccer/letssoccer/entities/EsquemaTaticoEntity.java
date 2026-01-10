@@ -17,7 +17,7 @@ public class EsquemaTaticoEntity {
 
     @OneToOne
     @JoinColumn(name = "clube_id", nullable = false)
-    private ClubeEntities clube;
+    private ClubeEntity clube;
 
     public Integer getId() {
         return id;
@@ -59,11 +59,11 @@ public class EsquemaTaticoEntity {
         this.esquema244 = esquema244;
     }
 
-    public ClubeEntities getClube() {
+    public ClubeEntity getClube() {
         return clube;
     }
 
-    public void setClube(ClubeEntities clube) {
+    public void setClube(ClubeEntity clube) {
         this.clube = clube;
     }
 

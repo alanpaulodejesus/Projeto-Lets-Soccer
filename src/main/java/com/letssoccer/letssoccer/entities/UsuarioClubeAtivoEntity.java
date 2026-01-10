@@ -17,7 +17,7 @@ public class UsuarioClubeAtivoEntity {
 
     @ManyToOne
     @JoinColumn(name = "clube_id", nullable = false)
-    private ClubeEntities clube;
+    private ClubeEntity clube;
 
     private LocalDateTime dataSelecao;
 
@@ -37,11 +37,11 @@ public class UsuarioClubeAtivoEntity {
         this.usuarioId = usuarioId;
     }
 
-    public ClubeEntities getClube() {
+    public ClubeEntity getClube() {
         return clube;
     }
 
-    public void setClube(ClubeEntities clube) {
+    public void setClube(ClubeEntity clube) {
         this.clube = clube;
     }
 

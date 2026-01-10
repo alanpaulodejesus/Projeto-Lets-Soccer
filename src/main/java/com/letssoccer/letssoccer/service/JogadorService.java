@@ -2,7 +2,7 @@ package com.letssoccer.letssoccer.service;
 
 import com.letssoccer.letssoccer.dto.JogadorRequestDto;
 import com.letssoccer.letssoccer.dto.JogadorResponseDto;
-import com.letssoccer.letssoccer.entities.ClubeEntities;
+import com.letssoccer.letssoccer.entities.ClubeEntity;
 import com.letssoccer.letssoccer.entities.JogadorEntity;
 import com.letssoccer.letssoccer.mappers.JogadorMapper;
 import com.letssoccer.letssoccer.messages.exception.BadRequestException;
@@ -26,7 +26,7 @@ public class JogadorService {
 
     public JogadorResponseDto adicionarJogador(Integer clubeId, JogadorRequestDto dto) {
 
-        ClubeEntities clube = clubeRepository.findById(clubeId)
+        ClubeEntity clube = clubeRepository.findById(clubeId)
                 .orElseThrow(() -> new NotFoundException(KeyMessages.CLUBE_NAO_ENCONTRADO));
         if (jogadorRepository.existsByNomeIgnoreCaseAndClubeId(dto.nome(), clubeId)) {
             throw new BadRequestException(

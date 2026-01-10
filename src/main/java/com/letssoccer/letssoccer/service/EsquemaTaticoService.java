@@ -1,7 +1,7 @@
 package com.letssoccer.letssoccer.service;
 
 import com.letssoccer.letssoccer.dto.EsquemaTaticoRequestDto;
-import com.letssoccer.letssoccer.entities.ClubeEntities;
+import com.letssoccer.letssoccer.entities.ClubeEntity;
 import com.letssoccer.letssoccer.entities.EsquemaTaticoEntity;
 import com.letssoccer.letssoccer.messages.exception.BadRequestException;
 import com.letssoccer.letssoccer.messages.exception.KeyMessages;
@@ -25,7 +25,7 @@ public class EsquemaTaticoService {
 
     public String definirEsquema(Integer clubeId, EsquemaTaticoRequestDto dto) {
 
-        ClubeEntities clube = clubeRepository.findById(clubeId)
+        ClubeEntity clube = clubeRepository.findById(clubeId)
                 .orElseThrow(() ->
                         new NotFoundException(KeyMessages.CLUBE_NAO_ENCONTRADO));
 

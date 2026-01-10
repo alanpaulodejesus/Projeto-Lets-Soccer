@@ -3,7 +3,7 @@ package com.letssoccer.letssoccer.service;
 import com.letssoccer.letssoccer.dto.ClubeDetalhadoResponseDto;
 import com.letssoccer.letssoccer.dto.ClubeRequestDto;
 import com.letssoccer.letssoccer.dto.ClubeResponseDto;
-import com.letssoccer.letssoccer.entities.ClubeEntities;
+import com.letssoccer.letssoccer.entities.ClubeEntity;
 import com.letssoccer.letssoccer.messages.exception.BadRequestException;
 import com.letssoccer.letssoccer.messages.exception.KeyMessages;
 import com.letssoccer.letssoccer.messages.exception.NotFoundException;
@@ -34,8 +34,8 @@ public class ClubeService {
         if (clubeRepository.existsByNome(clubeRequestDto.nome())) {
             throw new BadRequestException(KeyMessages.NOME_CLUBE_CADASTRADO);
         }
-        ClubeEntities clubeEntities = ClubeMapper.toClubeEntity(clubeRequestDto);
-        ClubeEntities salvo = clubeRepository.save(clubeEntities);
+        ClubeEntity clubeEntity = ClubeMapper.toClubeEntity(clubeRequestDto);
+        ClubeEntity salvo = clubeRepository.save(clubeEntity);
 
         return ClubeMapper.toClubeResponseDTO(salvo);
     }
@@ -48,7 +48,7 @@ public class ClubeService {
     }
 
     public ClubeResponseDto buscarClubePorId(Integer id) {
-        ClubeEntities clube = clubeRepository.findById(id)
+        ClubeEntity clube = clubeRepository.findById(id)
                 .orElseThrow(() ->
                         new NotFoundException(KeyMessages.CLUBE_NAO_ENCONTRADO));
         return ClubeMapper.toClubeResponseDTO(clube);
@@ -56,7 +56,7 @@ public class ClubeService {
 
     public ClubeResponseDto atualizarClube(Integer id, ClubeRequestDto dto) {
 
-        ClubeEntities clube = clubeRepository.findById(id)
+        ClubeEntity clube = clubeRepository.findById(id)
                 .orElseThrow(() ->
                         new NotFoundException(KeyMessages.CLUBE_NAO_ENCONTRADO));
 
@@ -72,13 +72,13 @@ public class ClubeService {
         clube.setNome(dto.nome());
         clube.setInformacao(dto.informacao());
 
-        ClubeEntities salvo = clubeRepository.save(clube);
+        ClubeEntity salvo = clubeRepository.save(clube);
 
         return ClubeMapper.toClubeResponseDTO(salvo);
     }
 
     public void deletarClube(Integer id) {
-        ClubeEntities clube = clubeRepository.findByIdWithJogadores(id)
+        ClubeEntity clube = clubeRepository.findByIdWithJogadores(id)
                 .orElseThrow(() ->
                         new NotFoundException("Clube com ID " + id + " não encontrado.")
                 );
@@ -98,7 +98,7 @@ public class ClubeService {
     }
 
     public ClubeDetalhadoResponseDto buscarClubeDetalhado(Integer id) {
-        ClubeEntities clube = clubeRepository.findByIdWithJogadores(id)
+        ClubeEntity clube = clubeRepository.findByIdWithJogadores(id)
                 .orElseThrow(() ->
                         new NotFoundException(KeyMessages.CLUBE_NAO_ENCONTRADO));
         return ClubeMapper.toDetalhadoDto(clube);

@@ -15,7 +15,7 @@ public class EsquemaTaticoUsuarioEntity {
 
     @ManyToOne
     @JoinColumn(name = "clube_id", nullable = false)
-    private ClubeEntities clube;
+    private ClubeEntity clube;
 
     @Column(nullable = false)
     private String esquema;
@@ -36,11 +36,11 @@ public class EsquemaTaticoUsuarioEntity {
         this.usuarioId = usuarioId;
     }
 
-    public ClubeEntities getClube() {
+    public ClubeEntity getClube() {
         return clube;
     }
 
-    public void setClube(ClubeEntities clube) {
+    public void setClube(ClubeEntity clube) {
         this.clube = clube;
     }
 

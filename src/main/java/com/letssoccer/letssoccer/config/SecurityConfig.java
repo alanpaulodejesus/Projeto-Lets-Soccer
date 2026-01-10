@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,34 +15,55 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 public class SecurityConfig {
+
     private final JwtAuthenticationFilter jwtFilter;
 
     public SecurityConfig(JwtAuthenticationFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration configuration
+            AuthenticationConfiguration config
     ) throws Exception {
-        return configuration.getAuthenticationManager();
+        return config.getAuthenticationManager();
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http
                 .csrf(csrf -> csrf.disable())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(auth -> auth
 
+                        // PUBLICOS
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios/cadastro").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/clubes/**").permitAll()
+
+                        // USER
+                        //.requestMatchers("/usuarios/clube").hasRole("USER")
+                        //.requestMatchers("/usuarios/esquema").hasRole("USER")
+
+                        //ADMIN E USER
+                        .requestMatchers(HttpMethod.POST, "/usuarios/clube")
+                        .hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/clube/*/esquema-tatico")
+                        .hasAnyRole("USER", "ADMIN")
+
+                        // ADMIN
+                        .requestMatchers("/clubes/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
-                ).addFilterBefore(jwtFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
