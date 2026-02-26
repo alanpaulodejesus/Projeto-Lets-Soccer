@@ -55,11 +55,11 @@ public class SecurityConfig {
                         //ADMIN E USER
                         .requestMatchers(HttpMethod.POST, "/usuarios/clube")
                         .hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/clube/*/esquema-tatico")
+                        .requestMatchers(HttpMethod.POST, "/clube/{id}/esquema-tatico")
                         .hasAnyRole("USER", "ADMIN")
 
                         // ADMIN
-                        .requestMatchers("/clubes/**").hasRole("ADMIN")
+                        //.requestMatchers("/clubes/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )
