@@ -24,9 +24,20 @@ public class UsuarioService {
         if (repository.existsByEmail(dto.email())) {
             throw new BadRequestException("E-mail já cadastrado");
         }
-
+        if (dto.email() == null || dto.email().isBlank()) {
+            throw new BadRequestException("Email é obrigatório");
+        }
+        if (dto.senha() == null || dto.senha().isBlank()) {
+            throw new BadRequestException("Senha é obrigatória");
+        }
+        if (dto.confirmacaoSenha() == null || dto.confirmacaoSenha().isBlank()) {
+            throw new BadRequestException("Senha é obrigatória");
+        }
         if (!dto.senha().equals(dto.confirmacaoSenha())) {
             throw new BadRequestException("Senhas não conferem");
+        }
+        if (dto.nome() == null || dto.nome().isBlank()) {
+            throw new BadRequestException("Nome é obrigatório");
         }
 
         UsuarioEntity usuario = new UsuarioEntity();
