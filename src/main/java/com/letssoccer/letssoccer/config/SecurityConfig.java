@@ -61,7 +61,8 @@ public class SecurityConfig {
                         // ADMIN
                         //.requestMatchers("/clubes/**").hasRole("ADMIN")
 
-                        .anyRequest().authenticated()
+                        //.anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
