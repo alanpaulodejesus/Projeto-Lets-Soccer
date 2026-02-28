@@ -7,6 +7,9 @@ import com.letssoccer.letssoccer.security.JwtAuthenticationFilter;
 import com.letssoccer.letssoccer.service.JwtService;
 import com.letssoccer.letssoccer.service.UsuarioService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -99,5 +103,58 @@ class UsuarioControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.mensagem")
                         .value("Senhas não conferem"));
+    }
+
+    @NullSource
+    @ParameterizedTest
+    @ValueSource(strings = { "", "   " })
+    void deveRetornar400QuandoEmailInvalido(String emailInvalido) throws Exception {
+
+        UsuarioCadastroDto dto = new UsuarioCadastroDto(
+                "Alan",
+                emailInvalido,
+                "123",
+                "123"
+        );
+
+        doThrow(new BadRequestException("Email é obrigatório"))
+                .when(service).cadastrar(any());
+
+        mockMvc.perform(post("/usuarios/cadastro")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem")
+                        .value("Email é obrigatório"));
+    }
+    @NullSource
+    @ParameterizedTest
+    @ValueSource(strings = { "", "   " })
+    void deveRetornar400QuandoNomeInvalido(String nomeInvalido) throws Exception {
+
+        UsuarioCadastroDto dto = new UsuarioCadastroDto(
+                nomeInvalido,
+                "user@email.com",
+                "123",
+                "123"
+        );
+
+        doThrow(new BadRequestException("Nome é obrigatório"))
+                .when(service).cadastrar(any());
+
+        mockMvc.perform(post("/usuarios/cadastro")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem")
+                        .value("Nome é obrigatório"));
+    }
+    @Test
+    void deveRetornar415QuandoContentTypeForInvalido() throws Exception {
+
+        mockMvc.perform(post("/usuarios/cadastro")
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content("qualquer coisa"))
+                .andExpect(status().isUnsupportedMediaType());
     }
 }

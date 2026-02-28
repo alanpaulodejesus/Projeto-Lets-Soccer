@@ -21,9 +21,6 @@ public class UsuarioService {
 
     public void cadastrar(UsuarioCadastroDto dto) {
 
-        if (repository.existsByEmail(dto.email())) {
-            throw new BadRequestException("E-mail já cadastrado");
-        }
         if (dto.email() == null || dto.email().isBlank()) {
             throw new BadRequestException("Email é obrigatório");
         }
@@ -38,6 +35,9 @@ public class UsuarioService {
         }
         if (dto.nome() == null || dto.nome().isBlank()) {
             throw new BadRequestException("Nome é obrigatório");
+        }
+        if (repository.existsByEmail(dto.email())) {
+            throw new BadRequestException("E-mail já cadastrado");
         }
 
         UsuarioEntity usuario = new UsuarioEntity();
