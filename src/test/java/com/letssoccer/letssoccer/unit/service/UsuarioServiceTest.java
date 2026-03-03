@@ -1,4 +1,4 @@
-package com.letssoccer.letssoccer.unit;
+package com.letssoccer.letssoccer.unit.service;
 
 import com.letssoccer.letssoccer.dto.UsuarioCadastroDto;
 import com.letssoccer.letssoccer.entities.UsuarioEntity;
