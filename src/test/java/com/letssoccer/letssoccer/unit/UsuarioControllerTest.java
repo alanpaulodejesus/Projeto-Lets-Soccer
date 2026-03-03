@@ -1,6 +1,7 @@
-package com.letssoccer.letssoccer.controller;
+package com.letssoccer.letssoccer.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.letssoccer.letssoccer.controller.UsuarioController;
 import com.letssoccer.letssoccer.dto.UsuarioCadastroDto;
 import com.letssoccer.letssoccer.messages.exception.BadRequestException;
 import com.letssoccer.letssoccer.security.JwtAuthenticationFilter;

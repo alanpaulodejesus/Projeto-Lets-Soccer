@@ -1,9 +1,10 @@
-package com.letssoccer.letssoccer.service;
+package com.letssoccer.letssoccer.unit;
 
 import com.letssoccer.letssoccer.dto.UsuarioCadastroDto;
 import com.letssoccer.letssoccer.entities.UsuarioEntity;
 import com.letssoccer.letssoccer.messages.exception.BadRequestException;
 import com.letssoccer.letssoccer.repositories.UsuarioRepository;
+import com.letssoccer.letssoccer.service.UsuarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
