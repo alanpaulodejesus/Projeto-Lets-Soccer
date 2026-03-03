@@ -1,4 +1,4 @@
-package com.letssoccer.letssoccer.unit;
+package com.letssoccer.letssoccer.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.letssoccer.letssoccer.controller.LoginController;
