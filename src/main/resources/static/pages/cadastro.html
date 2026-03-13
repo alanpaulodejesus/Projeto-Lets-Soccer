@@ -8,6 +8,8 @@
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
     <style>
 
 body{
@@ -23,6 +25,22 @@ margin-top:60px;
 
 .logo span{
 color:#4caf50;
+}
+
+.password-container{
+position:relative;
+}
+
+.password-toggle{
+position:absolute;
+right:10px;
+top:12px;
+cursor:pointer;
+font-size:20px;
+}
+
+input:-webkit-autofill{
+box-shadow:0 0 0px 1000px white inset !important;
 }
 
 </style>
@@ -50,27 +68,35 @@ color:#4caf50;
                     <form id="cadastroForm">
 
                         <div class="input-field">
-                            <input id="nome" type="text" required>
+                            <input id="nome" type="text" autocomplete="off" required>
                             <label for="nome">Nome</label>
                         </div>
 
                         <div class="input-field">
-                            <input id="email" type="email" required>
+                            <input id="email" type="email" autocomplete="off" required>
                             <label for="email">Email</label>
                         </div>
 
-                        <div class="input-field">
-                            <input id="senha" type="password" required>
+                        <div class="input-field password-container">
+
+                            <input id="senha" type="password" autocomplete="off" required>
                             <label for="senha">Senha</label>
+
+                            <span id="toggleSenha" class="password-toggle">👁</span>
+
                         </div>
 
-                        <div class="input-field">
-                            <input id="confirmacaoSenha" type="password" required>
+                        <div class="input-field password-container">
+
+                            <input id="confirmacaoSenha" type="password" autocomplete="off" required>
                             <label for="confirmacaoSenha">Confirmar senha</label>
+
+                            <span id="toggleConfirmarSenha" class="password-toggle">👁</span>
+
                         </div>
 
                         <div class="center">
-                            <button class="btn green">
+                            <button class="btn green waves-effect waves-light">
                                 Cadastrar
                             </button>
                         </div>
