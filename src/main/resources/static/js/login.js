@@ -1,29 +1,24 @@
-window.addEventListener("load", () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-const inputs = document.querySelectorAll("input");
-const toggleSenha = document.getElementById("toggleSenha");
-const senhaInput = document.getElementById("senha");
 const form = document.getElementById("loginForm");
 const mensagem = document.getElementById("mensagem");
 
-// limpar campos
-inputs.forEach(input=>{
+const senhaInput = document.getElementById("senha");
+const toggleSenha = document.getElementById("toggleSenha");
+
+// limpa campos
+document.querySelectorAll("input").forEach(input=>{
 input.value="";
 });
 
+// atualiza labels Materialize
 setTimeout(()=>{
-
-inputs.forEach(input=>{
-input.value="";
-});
-
-if(typeof M !== "undefined"){
+if(window.M){
 M.updateTextFields();
 }
+},50);
 
-},100);
-
-// toggle senha
+// mostrar / ocultar senha
 toggleSenha.addEventListener("click",()=>{
 
 senhaInput.type =

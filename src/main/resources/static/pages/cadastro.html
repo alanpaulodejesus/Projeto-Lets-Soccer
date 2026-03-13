@@ -4,7 +4,7 @@
 <head>
 
     <meta charset="UTF-8">
-    <title>Cadastro - Lets Soccer</title>
+    <title>Cadastro</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
 
@@ -13,7 +13,7 @@
     <style>
 
 body{
-background:#0d47a1;
+background:#1e4fa3;
 }
 
 .logo{
@@ -34,16 +34,13 @@ position:relative;
 .password-toggle{
 position:absolute;
 right:10px;
-top:12px;
+top:15px;
 cursor:pointer;
-font-size:20px;
+font-size:18px;
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus{
--webkit-box-shadow:0 0 0px 1000px white inset !important;
-transition:background-color 5000s ease-in-out 0s;
+.input-field label{
+left:0 !important;
 }
 
 </style>
@@ -73,28 +70,32 @@ transition:background-color 5000s ease-in-out 0s;
                         <input type="text" style="display:none">
                         <input type="password" style="display:none">
 
-                        <div class="input-field">
+                        <div class="input-field col s12">
+
                             <input id="nome" type="text" autocomplete="off" required>
                             <label for="nome">Nome</label>
+
                         </div>
 
-                        <div class="input-field">
-                            <input id="email" type="email" autocomplete="new-email" required>
+                        <div class="input-field col s12">
+
+                            <input id="email" type="email" autocomplete="off" required>
                             <label for="email">Email</label>
+
                         </div>
 
-                        <div class="input-field password-container">
+                        <div class="input-field col s12 password-container">
 
-                            <input id="senha" type="password" autocomplete="new-password" required>
+                            <input id="senha" type="password" autocomplete="off" required>
                             <label for="senha">Senha</label>
 
                             <span id="toggleSenha" class="password-toggle">👁</span>
 
                         </div>
 
-                        <div class="input-field password-container">
+                        <div class="input-field col s12 password-container">
 
-                            <input id="confirmacaoSenha" type="password" autocomplete="new-password" required>
+                            <input id="confirmacaoSenha" type="password" autocomplete="off" required>
                             <label for="confirmacaoSenha">Confirmar senha</label>
 
                             <span id="toggleConfirmarSenha" class="password-toggle">👁</span>
@@ -102,9 +103,11 @@ transition:background-color 5000s ease-in-out 0s;
                         </div>
 
                         <div class="center">
+
                             <button class="btn green waves-effect waves-light">
                                 Cadastrar
                             </button>
+
                         </div>
 
                     </form>
@@ -121,6 +124,7 @@ transition:background-color 5000s ease-in-out 0s;
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="/js/cadastro.js"></script>
 
 </body>
