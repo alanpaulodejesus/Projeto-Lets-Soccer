@@ -1,16 +1,24 @@
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("load", () => {
 
-const form = document.getElementById("cadastroForm");
-const mensagem = document.getElementById("mensagem");
-
-const toggleSenha = document.getElementById("toggleSenha");
-const toggleConfirmar = document.getElementById("toggleConfirmarSenha");
+const inputs = document.querySelectorAll("input");
 
 const senhaInput = document.getElementById("senha");
 const confirmarInput = document.getElementById("confirmacaoSenha");
 
-// limpa campos
-document.querySelectorAll("input").forEach(input=>{
+const toggleSenha = document.getElementById("toggleSenha");
+const toggleConfirmar = document.getElementById("toggleConfirmarSenha");
+
+const form = document.getElementById("cadastroForm");
+const mensagem = document.getElementById("mensagem");
+
+// limpar campos
+inputs.forEach(input=>{
+input.value="";
+});
+
+setTimeout(()=>{
+
+inputs.forEach(input=>{
 input.value="";
 });
 
@@ -18,16 +26,22 @@ if(typeof M !== "undefined"){
 M.updateTextFields();
 }
 
-// mostrar senha
+},100);
+
+// toggle senha
 toggleSenha.addEventListener("click",()=>{
+
 senhaInput.type =
 senhaInput.type === "password" ? "text" : "password";
+
 });
 
-// mostrar confirmar senha
+// toggle confirmar senha
 toggleConfirmar.addEventListener("click",()=>{
+
 confirmarInput.type =
 confirmarInput.type === "password" ? "text" : "password";
+
 });
 
 form.addEventListener("submit", async (e)=>{
@@ -53,7 +67,7 @@ headers:{
 "Content-Type":"application/json"
 },
 
-body: JSON.stringify(dto)
+body:JSON.stringify(dto)
 
 });
 
