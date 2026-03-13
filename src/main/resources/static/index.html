@@ -38,6 +38,22 @@ display:block;
 text-align:center;
 }
 
+input:-webkit-autofill{
+box-shadow:0 0 0px 1000px white inset !important;
+}
+
+.password-container{
+position:relative;
+}
+
+.password-toggle{
+position:absolute;
+right:10px;
+top:12px;
+cursor:pointer;
+font-size:20px;
+}
+
 </style>
 
 </head>
@@ -63,13 +79,17 @@ text-align:center;
                     <form id="loginForm">
 
                         <div class="input-field">
-                            <input id="email" type="email" required>
+                            <input id="email" type="email" autocomplete="off" required>
                             <label for="email">Email</label>
                         </div>
 
-                        <div class="input-field">
-                            <input id="senha" type="password" required>
+                        <div class="input-field password-container">
+
+                            <input id="senha" type="password" autocomplete="off" required>
                             <label for="senha">Senha</label>
+
+                            <span id="toggleSenha" class="password-toggle">👁</span>
+
                         </div>
 
                         <div class="center">

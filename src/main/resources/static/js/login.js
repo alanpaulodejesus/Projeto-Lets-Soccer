@@ -1,14 +1,34 @@
 document.addEventListener("DOMContentLoaded", () => {
 
 const form = document.getElementById("loginForm");
-const mensagemDiv = document.getElementById("mensagem");
+const mensagem = document.getElementById("mensagem");
 
-form.addEventListener("submit", async function(e){
+const toggleSenha = document.getElementById("toggleSenha");
+const senhaInput = document.getElementById("senha");
+
+// limpa campos
+document.querySelectorAll("input").forEach(input=>{
+input.value="";
+});
+
+if(typeof M !== "undefined"){
+M.updateTextFields();
+}
+
+// mostrar / ocultar senha
+toggleSenha.addEventListener("click",()=>{
+
+senhaInput.type =
+senhaInput.type === "password" ? "text" : "password";
+
+});
+
+form.addEventListener("submit", async (e)=>{
 
 e.preventDefault();
 
 const email = document.getElementById("email").value;
-const senha = document.getElementById("senha").value;
+const senha = senhaInput.value;
 
 try{
 
@@ -21,8 +41,8 @@ headers:{
 },
 
 body: JSON.stringify({
-email: email,
-senha: senha
+email:email,
+senha:senha
 })
 
 });
@@ -30,49 +50,27 @@ senha: senha
 const data = await response.json();
 
 if(!response.ok){
-
-throw new Error(data?.mensagem || "Erro ao realizar login");
-
+throw new Error(data.message || "Erro no login");
 }
 
-localStorage.setItem("token", data.token);
+localStorage.setItem("token",data.token);
 
-exibirMensagem("Login realizado com sucesso!", true);
-
-setTimeout(()=>{
-
-window.location.href = "/pages/dashboard.html";
-
-},1000);
+window.location.href="/pages/dashboard.html";
 
 }catch(error){
 
-exibirMensagem(error.message, false);
+mensagem.innerHTML=`
+
+<div class="card-panel red lighten-4">
+<span class="red-text text-darken-4">
+${error.message}
+</span>
+</div>
+
+`;
 
 }
 
 });
-
-function exibirMensagem(texto, sucesso=true){
-
-const cor = sucesso ? "green" : "red";
-
-mensagemDiv.innerHTML="";
-
-const div = document.createElement("div");
-
-div.className = `card-panel ${cor} lighten-4`;
-
-div.innerHTML = `<span class="${cor}-text text-darken-4">${texto}</span>`;
-
-mensagemDiv.appendChild(div);
-
-setTimeout(()=>{
-
-div.remove();
-
-},4000);
-
-}
 
 });
