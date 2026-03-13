@@ -6,17 +6,22 @@ const mensagem = document.getElementById("mensagem");
 const senhaInput = document.getElementById("senha");
 const toggleSenha = document.getElementById("toggleSenha");
 
-// limpa campos
-document.querySelectorAll("input").forEach(input=>{
-input.value="";
-});
+const inputs = document.querySelectorAll("input");
 
-// atualiza labels Materialize
+// limpa campos imediatamente
+inputs.forEach(i => i.value = "");
+
+// limpa novamente após autofill do navegador
 setTimeout(()=>{
+
+inputs.forEach(i => i.value = "");
+
 if(window.M){
 M.updateTextFields();
 }
-},50);
+
+},200);
+
 
 // mostrar / ocultar senha
 toggleSenha.addEventListener("click",()=>{
@@ -25,6 +30,7 @@ senhaInput.type =
 senhaInput.type === "password" ? "text" : "password";
 
 });
+
 
 // login
 form.addEventListener("submit", async (e)=>{

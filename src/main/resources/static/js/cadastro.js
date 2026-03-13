@@ -9,16 +9,21 @@ const confirmarInput = document.getElementById("confirmacaoSenha");
 const toggleSenha = document.getElementById("toggleSenha");
 const toggleConfirmar = document.getElementById("toggleConfirmarSenha");
 
+const inputs = document.querySelectorAll("input");
+
 // limpa campos
-document.querySelectorAll("input").forEach(input=>{
-input.value="";
-});
+inputs.forEach(i => i.value = "");
 
 setTimeout(()=>{
+
+inputs.forEach(i => i.value = "");
+
 if(window.M){
 M.updateTextFields();
 }
-},50);
+
+},200);
+
 
 // toggle senha
 toggleSenha.addEventListener("click",()=>{
@@ -26,11 +31,13 @@ senhaInput.type =
 senhaInput.type === "password" ? "text" : "password";
 });
 
-// toggle confirmar senha
+
+// toggle confirmar
 toggleConfirmar.addEventListener("click",()=>{
 confirmarInput.type =
 confirmarInput.type === "password" ? "text" : "password";
 });
+
 
 // cadastro
 form.addEventListener("submit", async (e)=>{
