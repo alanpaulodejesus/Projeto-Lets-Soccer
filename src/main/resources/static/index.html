@@ -13,7 +13,7 @@
     <style>
 
 body{
-background:#0d47a1;
+background:#1e4fa3;
 }
 
 .logo{
@@ -30,6 +30,7 @@ color:#4caf50;
 .card-login{
 margin-top:40px;
 border-radius:10px;
+padding:10px;
 }
 
 .link-cadastro{
@@ -45,16 +46,13 @@ position:relative;
 .password-toggle{
 position:absolute;
 right:10px;
-top:12px;
+top:15px;
 cursor:pointer;
-font-size:20px;
+font-size:18px;
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus{
--webkit-box-shadow:0 0 0px 1000px white inset !important;
-transition:background-color 5000s ease-in-out 0s;
+.input-field label{
+left:0 !important;
 }
 
 </style>
@@ -81,15 +79,18 @@ transition:background-color 5000s ease-in-out 0s;
 
                     <form id="loginForm" autocomplete="off">
 
-                        <input type="text" style="display:none">
-                        <input type="password" style="display:none">
+                        <!-- campos fake para bloquear autofill -->
+                        <input type="text" name="fakeuser" style="display:none">
+                        <input type="password" name="fakepassword" style="display:none">
 
-                        <div class="input-field">
-                            <input id="email" type="email" autocomplete="new-email" required>
+                        <div class="input-field col s12">
+
+                            <input id="email" type="email" autocomplete="off" required>
                             <label for="email">Email</label>
+
                         </div>
 
-                        <div class="input-field password-container">
+                        <div class="input-field col s12 password-container">
 
                             <input id="senha" type="password" autocomplete="new-password" required>
                             <label for="senha">Senha</label>
@@ -99,9 +100,11 @@ transition:background-color 5000s ease-in-out 0s;
                         </div>
 
                         <div class="center">
+
                             <button class="btn green waves-effect waves-light">
                                 Entrar
                             </button>
+
                         </div>
 
                     </form>
@@ -122,6 +125,7 @@ transition:background-color 5000s ease-in-out 0s;
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="/js/login.js"></script>
 
 </body>

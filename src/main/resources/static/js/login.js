@@ -1,35 +1,36 @@
-window.addEventListener("load", () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-const inputs = document.querySelectorAll("input");
-const toggleSenha = document.getElementById("toggleSenha");
-const senhaInput = document.getElementById("senha");
 const form = document.getElementById("loginForm");
 const mensagem = document.getElementById("mensagem");
 
-// limpar campos
-inputs.forEach(input=>{
-input.value="";
-});
+const senhaInput = document.getElementById("senha");
+const toggleSenha = document.getElementById("toggleSenha");
 
+const inputs = document.querySelectorAll("input");
+
+// limpa campos imediatamente
+inputs.forEach(i => i.value = "");
+
+// limpa novamente após autofill do navegador
 setTimeout(()=>{
 
-inputs.forEach(input=>{
-input.value="";
-});
+inputs.forEach(i => i.value = "");
 
-if(typeof M !== "undefined"){
+if(window.M){
 M.updateTextFields();
 }
 
-},100);
+},200);
 
-// toggle senha
+
+// mostrar / ocultar senha
 toggleSenha.addEventListener("click",()=>{
 
 senhaInput.type =
 senhaInput.type === "password" ? "text" : "password";
 
 });
+
 
 // login
 form.addEventListener("submit", async (e)=>{
