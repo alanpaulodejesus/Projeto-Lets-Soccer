@@ -60,7 +60,7 @@ senha:senha
 const data = await response.json();
 
 if(!response.ok){
-throw new Error(data.message || "Erro no login");
+throw new Error(data.mensagem || "Erro no login");
 }
 
 localStorage.setItem("token",data.token);
