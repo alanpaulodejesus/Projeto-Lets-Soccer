@@ -4,11 +4,9 @@
 <head>
 
     <meta charset="UTF-8">
-    <title>Lets Soccer ⚽</title>
+    <title>Cadastro - Lets Soccer</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <style>
 
@@ -17,25 +15,14 @@ background:#0d47a1;
 }
 
 .logo{
-font-size:45px;
+font-size:40px;
 font-weight:bold;
 color:white;
-margin-top:80px;
+margin-top:60px;
 }
 
 .logo span{
 color:#4caf50;
-}
-
-.card-login{
-margin-top:40px;
-border-radius:10px;
-}
-
-.link-cadastro{
-margin-top:20px;
-display:block;
-text-align:center;
 }
 
 </style>
@@ -54,13 +41,18 @@ text-align:center;
 
         <div class="col s12 m6 offset-m3">
 
-            <div class="card card-login">
+            <div class="card">
 
                 <div class="card-content">
 
-                    <span class="card-title center">Login</span>
+                    <span class="card-title center">Criar conta</span>
 
-                    <form id="loginForm">
+                    <form id="cadastroForm">
+
+                        <div class="input-field">
+                            <input id="nome" type="text" required>
+                            <label for="nome">Nome</label>
+                        </div>
 
                         <div class="input-field">
                             <input id="email" type="email" required>
@@ -72,17 +64,18 @@ text-align:center;
                             <label for="senha">Senha</label>
                         </div>
 
+                        <div class="input-field">
+                            <input id="confirmacaoSenha" type="password" required>
+                            <label for="confirmacaoSenha">Confirmar senha</label>
+                        </div>
+
                         <div class="center">
-                            <button class="btn green waves-effect waves-light">
-                                Entrar
+                            <button class="btn green">
+                                Cadastrar
                             </button>
                         </div>
 
                     </form>
-
-                    <a class="link-cadastro" href="/pages/cadastro.html">
-                        Não tem conta? Cadastre-se
-                    </a>
 
                 </div>
 
@@ -96,7 +89,7 @@ text-align:center;
 
 </div>
 
-<script src="/js/login.js"></script>
+<script src="/js/cadastro.js"></script>
 
 </body>
 </html>
