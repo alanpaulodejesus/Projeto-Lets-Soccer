@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>Lets Soccer - Dashboard</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <style>
+
+.logo{
+font-size:30px;
+font-weight:bold;
+}
+
+.logo span{
+color:#4caf50;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav class="blue darken-4">
+
+    <div class="nav-wrapper container">
+
+        <a class="brand-logo logo">
+            ⚽ Lets <span>Soccer</span>
+        </a>
+
+        <ul class="right">
+            <li>
+                <a href="#" id="logoutBtn">Logout</a>
+            </li>
+        </ul>
+
+    </div>
+
+</nav>
+
+<div class="container">
+
+    <h4>Dashboard</h4>
+
+    <p>Login realizado com sucesso ⚽</p>
+
+    <button id="btnTestarApi" class="btn green">
+        Testar API protegida
+    </button>
+
+    <div id="resultado" style="margin-top:20px;"></div>
+
+</div>
+
+<script>
+
+const token = localStorage.getItem("token");
+
+if(!token){
+
+window.location.href="/";
+
+}
+
+document.getElementById("logoutBtn").addEventListener("click", ()=>{
+
+localStorage.removeItem("token");
+
+window.location.href="/";
+
+});
+
+document.getElementById("btnTestarApi").addEventListener("click", async ()=>{
+
+try{
+
+const response = await fetch("/usuarios",{
+
+headers:{
+Authorization: "Bearer " + token
+}
+
+});
+
+const data = await response.json();
+
+document.getElementById("resultado").innerHTML =
+`<pre>${JSON.stringify(data,null,2)}</pre>`;
+
+}catch(error){
+
+document.getElementById("resultado").innerHTML =
+`<span style="color:red">${error.message}</span>`;
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
