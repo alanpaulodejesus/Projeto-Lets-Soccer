@@ -39,8 +39,11 @@ cursor:pointer;
 font-size:20px;
 }
 
-input:-webkit-autofill{
-box-shadow:0 0 0px 1000px white inset !important;
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus{
+-webkit-box-shadow:0 0 0px 1000px white inset !important;
+transition:background-color 5000s ease-in-out 0s;
 }
 
 </style>
@@ -65,7 +68,10 @@ box-shadow:0 0 0px 1000px white inset !important;
 
                     <span class="card-title center">Criar conta</span>
 
-                    <form id="cadastroForm">
+                    <form id="cadastroForm" autocomplete="off">
+
+                        <input type="text" style="display:none">
+                        <input type="password" style="display:none">
 
                         <div class="input-field">
                             <input id="nome" type="text" autocomplete="off" required>
@@ -73,13 +79,13 @@ box-shadow:0 0 0px 1000px white inset !important;
                         </div>
 
                         <div class="input-field">
-                            <input id="email" type="email" autocomplete="off" required>
+                            <input id="email" type="email" autocomplete="new-email" required>
                             <label for="email">Email</label>
                         </div>
 
                         <div class="input-field password-container">
 
-                            <input id="senha" type="password" autocomplete="off" required>
+                            <input id="senha" type="password" autocomplete="new-password" required>
                             <label for="senha">Senha</label>
 
                             <span id="toggleSenha" class="password-toggle">👁</span>
@@ -88,7 +94,7 @@ box-shadow:0 0 0px 1000px white inset !important;
 
                         <div class="input-field password-container">
 
-                            <input id="confirmacaoSenha" type="password" autocomplete="off" required>
+                            <input id="confirmacaoSenha" type="password" autocomplete="new-password" required>
                             <label for="confirmacaoSenha">Confirmar senha</label>
 
                             <span id="toggleConfirmarSenha" class="password-toggle">👁</span>

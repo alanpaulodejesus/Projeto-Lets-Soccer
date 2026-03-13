@@ -1,13 +1,19 @@
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("load", () => {
 
+const inputs = document.querySelectorAll("input");
+const toggleSenha = document.getElementById("toggleSenha");
+const senhaInput = document.getElementById("senha");
 const form = document.getElementById("loginForm");
 const mensagem = document.getElementById("mensagem");
 
-const toggleSenha = document.getElementById("toggleSenha");
-const senhaInput = document.getElementById("senha");
+// limpar campos
+inputs.forEach(input=>{
+input.value="";
+});
 
-// limpa campos
-document.querySelectorAll("input").forEach(input=>{
+setTimeout(()=>{
+
+inputs.forEach(input=>{
 input.value="";
 });
 
@@ -15,7 +21,9 @@ if(typeof M !== "undefined"){
 M.updateTextFields();
 }
 
-// mostrar / ocultar senha
+},100);
+
+// toggle senha
 toggleSenha.addEventListener("click",()=>{
 
 senhaInput.type =
@@ -23,6 +31,7 @@ senhaInput.type === "password" ? "text" : "password";
 
 });
 
+// login
 form.addEventListener("submit", async (e)=>{
 
 e.preventDefault();
@@ -40,7 +49,7 @@ headers:{
 "Content-Type":"application/json"
 },
 
-body: JSON.stringify({
+body:JSON.stringify({
 email:email,
 senha:senha
 })
