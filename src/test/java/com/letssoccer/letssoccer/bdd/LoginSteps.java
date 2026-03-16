@@ -69,7 +69,7 @@ public class LoginSteps {
         );
     }
 
-    @Quando("eu informo email {string} e senha {string}")
+    @Quando("informo email {string} e senha {string}")
     public void enviarLogin(String email, String senha) {
 
         LoginRequestDto dto = new LoginRequestDto(email, senha);
@@ -86,7 +86,7 @@ public class LoginSteps {
         );
     }
 
-    @Entao("o sistema deve retornar um token")
+    @Entao("o sistema deve retornar o token")
     public void validarToken() {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -94,7 +94,7 @@ public class LoginSteps {
 
     }
 
-    @Entao("o sistema deve retornar erro {string}")
+    @Entao("o sistema deve retornar mensagem {string}")
     public void validarErro(String mensagem) throws JsonProcessingException {
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());

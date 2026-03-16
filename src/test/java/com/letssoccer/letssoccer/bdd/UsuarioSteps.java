@@ -65,7 +65,7 @@ public class UsuarioSteps {
         );
     }
 
-    @Entao("o usuário deve ser salvo no sistema exibindo mensagem {string}")
+    @Entao("o sistema exibe mensagem {string}")
     public void validarCadastroUsuarioComSucesso(String mensagem) throws JsonProcessingException {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
