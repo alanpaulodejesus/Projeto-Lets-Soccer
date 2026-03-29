@@ -1,6 +1,7 @@
 package com.letssoccer.letssoccer.controller;
 
 import com.letssoccer.letssoccer.dto.UsuarioClubeRequestDto;
+import com.letssoccer.letssoccer.dto.UsuarioClubeResponseDto;
 import com.letssoccer.letssoccer.entities.UsuarioEntity;
 import com.letssoccer.letssoccer.messages.sucess.MessageResponseDto;
 import com.letssoccer.letssoccer.service.UsuarioClubeService;
@@ -27,6 +28,22 @@ public class UsuarioClubeController {
         service.selecionarClube(usuario.getId(), dto.clubeId());
         return ResponseEntity.ok(
                 new MessageResponseDto("Clube definido com sucesso!")
+        );
+    }
+
+    @GetMapping("/clube")
+    public ResponseEntity<UsuarioClubeResponseDto> buscarClube(
+            @AuthenticationPrincipal UsuarioEntity usuario
+    ) {
+        if (usuario.getClube() == null) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(
+                new UsuarioClubeResponseDto(
+                        usuario.getClube().getId(),
+                        usuario.getClube().getNome()
+                )
         );
     }
 }
