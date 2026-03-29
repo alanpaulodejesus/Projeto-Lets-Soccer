@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const token = localStorage.getItem("token");
 
+    let clubeJaSelecionado = false; // 👈 CONTROLE
+
     if (!token) {
         window.location.href = "/";
         return;
@@ -27,12 +29,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (data) {
 
+            clubeJaSelecionado = true; // 👈 BLOQUEIA NOVAS ESCOLHAS
+
             let escudo = "";
 
             if (data.id === 1) {
                 escudo = "/img/cruzeiro.svg";
+                destacarCard("card-cruzeiro");
             } else if (data.id === 2) {
                 escudo = "/img/atletico-mineiro.svg";
+                destacarCard("card-atleticomg");
             }
 
             mostrarClube(data.nome, escudo);
@@ -46,6 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 🌐 função global
     window.selecionarClube = function (clubeId) {
+
+        // 🚫 BLOQUEIO FRONT
+        if (clubeJaSelecionado) {
+            mostrarMensagem("Você já escolheu seu time!", "red");
+            return;
+        }
 
         fetch("/usuarios/clube", {
             method: "POST",
@@ -65,19 +77,22 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(data => {
 
+            clubeJaSelecionado = true; // 👈 TRAVA APÓS ESCOLHA
+
             let nome = "";
             let escudo = "";
 
             if (clubeId === 1) {
                 nome = "Cruzeiro";
                 escudo = "/img/cruzeiro.svg";
+                destacarCard("card-cruzeiro");
             } else if (clubeId === 2) {
                 nome = "Atlético";
                 escudo = "/img/atletico-mineiro.svg";
+                destacarCard("card-atleticomg");
             }
 
             mostrarClube(nome, escudo);
-
             mostrarMensagem(data.mensagem, "green");
 
             containerTimes.style.display = "none";
@@ -89,6 +104,17 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     };
+
+    // 🎨 destacar card selecionado
+    function destacarCard(id) {
+
+        const card = document.getElementById(id);
+
+        if (card) {
+            card.style.border = "3px solid green";
+            card.style.borderRadius = "10px";
+        }
+    }
 
     // 🎨 render clube
     function mostrarClube(nome, escudo) {
