@@ -26,7 +26,7 @@ public class UsuarioClubeController {
     ) {
         service.selecionarClube(usuario.getId(), dto.clubeId());
         return ResponseEntity.ok(
-                new MessageResponseDto("Clube definido com sucesso")
+                new MessageResponseDto("Clube definido com sucesso!")
         );
     }
 }
