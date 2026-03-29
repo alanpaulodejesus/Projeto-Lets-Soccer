@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     const mensagem = document.getElementById("mensagem");
+    const mensagemModal = document.getElementById("mensagemModal");
     const containerTimes = document.getElementById("listaTimes");
     const clubeSelecionadoDiv = document.getElementById("clubeSelecionado");
     const textoEscolha = document.getElementById("textoEscolha");
@@ -14,6 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    // 🔥 Modal NÃO fecha clicando fora
+    const modals = document.querySelectorAll('.modal');
+    M.Modal.init(modals, {
+        dismissible: false
+    });
+
+    // 🔎 Busca clube
     fetch("/usuarios/clube", {
         method: "GET",
         headers: {
@@ -48,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
+    // 🌐 selecionar clube
     window.selecionarClube = function (clubeId) {
 
         if (clubeJaSelecionado) {
@@ -101,10 +110,75 @@ document.addEventListener("DOMContentLoaded", () => {
 
     };
 
+    // 🎯 SALVAR ESQUEMA (COM VALIDAÇÃO CORRETA)
+    window.salvarEsquema = function () {
+
+        const selecionado = document.querySelector('input[name="esquema"]:checked');
+
+        // ❌ NÃO FECHA O MODAL
+        if (!selecionado) {
+
+            mensagemModal.innerHTML = `
+                <div class="card-panel red lighten-4">
+                    <span>Selecione um esquema tático!</span>
+                </div>
+            `;
+
+            return;
+        }
+
+        mensagemModal.innerHTML = "";
+
+        const valor = selecionado.value;
+
+        const body = {
+            esquema442: valor === "442",
+            esquema352: valor === "352",
+            esquema541: valor === "541",
+            esquema244: valor === "244"
+        };
+
+        fetch("/clube/1/esquema-tatico", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(body)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Erro ao salvar esquema");
+            return res.json();
+        })
+        .then(data => {
+
+            mensagemModal.innerHTML = `
+                <div class="card-panel green lighten-4">
+                    <span>Esquema salvo com sucesso!</span>
+                </div>
+            `;
+
+            // 👇 fecha depois de feedback
+            setTimeout(() => {
+                const modal = M.Modal.getInstance(document.getElementById('modalEsquema'));
+                modal.close();
+                mensagemModal.innerHTML = "";
+            }, 1500);
+
+        })
+        .catch(err => {
+
+            mensagemModal.innerHTML = `
+                <div class="card-panel red lighten-4">
+                    <span>${err.message}</span>
+                </div>
+            `;
+        });
+
+    };
+
     function destacarCard(id) {
-
         const card = document.getElementById(id);
-
         if (card) {
             card.style.border = "3px solid green";
             card.style.borderRadius = "10px";
