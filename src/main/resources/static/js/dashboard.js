@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const containerTimes = document.getElementById("listaTimes");
     const clubeSelecionadoDiv = document.getElementById("clubeSelecionado");
     const textoEscolha = document.getElementById("textoEscolha");
+    const btnEsquema = document.getElementById("btnEsquema"); // 👈 NOVO
 
     const token = localStorage.getItem("token");
 
@@ -13,6 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!token) {
         window.location.href = "/";
         return;
+    }
+
+    // 🔒 botão começa escondido
+    if (btnEsquema) {
+        btnEsquema.style.display = "none";
     }
 
     // 🔥 Modal NÃO fecha clicando fora
@@ -52,6 +58,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             containerTimes.style.display = "none";
             textoEscolha.style.display = "none";
+
+            // ✅ MOSTRA botão agora
+            if (btnEsquema) {
+                btnEsquema.style.display = "inline-block";
+            }
         }
 
     });
@@ -103,6 +114,11 @@ document.addEventListener("DOMContentLoaded", () => {
             containerTimes.style.display = "none";
             textoEscolha.style.display = "none";
 
+            // ✅ MOSTRA botão após escolha
+            if (btnEsquema) {
+                btnEsquema.style.display = "inline-block";
+            }
+
         })
         .catch(error => {
             mostrarMensagem(error.message, "red");
@@ -110,12 +126,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     };
 
-    // 🎯 SALVAR ESQUEMA (COM VALIDAÇÃO CORRETA)
+    // 🎯 SALVAR ESQUEMA
     window.salvarEsquema = function () {
+
+        // 🔒 proteção extra
+        if (!clubeJaSelecionado) {
+            mensagemModal.innerHTML = `
+                <div class="card-panel red lighten-4">
+                    <span>Escolha um time primeiro!</span>
+                </div>
+            `;
+            return;
+        }
 
         const selecionado = document.querySelector('input[name="esquema"]:checked');
 
-        // ❌ NÃO FECHA O MODAL
         if (!selecionado) {
 
             mensagemModal.innerHTML = `
@@ -123,6 +148,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span>Selecione um esquema tático!</span>
                 </div>
             `;
+
+            // ⏳ SOME EM 3s (só essa mensagem)
+            setTimeout(() => {
+                mensagemModal.innerHTML = "";
+            }, 2000);
 
             return;
         }
@@ -158,7 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
 
-            // 👇 fecha depois de feedback
             setTimeout(() => {
                 const modal = M.Modal.getInstance(document.getElementById('modalEsquema'));
                 modal.close();
@@ -205,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setTimeout(() => {
             mensagem.innerHTML = "";
-        }, 3000);
+        }, 2000);
     }
 
 });
