@@ -39,9 +39,7 @@
 </div>
 
 <div class="container">
-
     <div id="clubeSelecionado"></div>
-
 </div>
 
 <div class="container">
@@ -50,6 +48,7 @@
         <h5>Bem-vindo!</h5>
         <p>Sua paixão pelo seu time!</p>
         <p id="textoEscolha">Escolha seu time:</p>
+
         <!-- Cruzeiro -->
         <div class="col s6">
             <div class="card hoverable center" onclick="selecionarClube(1)" style="cursor:pointer">
@@ -72,10 +71,72 @@
 
     </div>
 
+    <!-- Botão modal -->
+    <div class="center" style="margin-top:20px;">
+        <a id="btnEsquema" class="btn modal-trigger green" href="#modalEsquema">
+            Escolher Esquema Tático
+        </a>
+    </div>
+
     <div id="mensagem"></div>
 
 </div>
 
+<!-- 🔥 MODAL -->
+<div id="modalEsquema" class="modal">
+    <div class="modal-content">
+
+        <h5>Escolha o esquema tático</h5>
+
+        <!-- 👇 MENSAGEM DENTRO DO MODAL -->
+        <div id="mensagemModal"></div>
+
+        <p>
+            <label>
+                <input name="esquema" type="radio" value="442" />
+                <span>4-4-2</span>
+            </label>
+        </p>
+
+        <p>
+            <label>
+                <input name="esquema" type="radio" value="352" />
+                <span>3-5-2</span>
+            </label>
+        </p>
+
+        <p>
+            <label>
+                <input name="esquema" type="radio" value="541" />
+                <span>5-4-1</span>
+            </label>
+        </p>
+
+        <p>
+            <label>
+                <input name="esquema" type="radio" value="244" />
+                <span>2-4-4</span>
+            </label>
+        </p>
+
+    </div>
+
+    <div class="modal-footer">
+
+        <!-- VOLTAR -->
+        <a href="#!" class="modal-close btn red">
+            Voltar
+        </a>
+
+        <!-- CONFIRMAR (SEM modal-close!) -->
+        <a href="#!" class="btn green" onclick="salvarEsquema()">
+            Confirmar
+        </a>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="/js/dashboard.js"></script>
 
 <script>
