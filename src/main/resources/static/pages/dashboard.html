@@ -9,56 +9,85 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
 
     <style>
+        body {
+            background: #f5f5f5;
+        }
 
-body{
-background:#f5f5f5;
-}
+        .header {
+            background: #1e4fa3;
+            color: white;
+            padding: 20px;
+        }
 
-.header{
-background:#1e4fa3;
-color:white;
-padding:20px;
-}
-
-.logout-btn{
-position:absolute;
-left:20px;
-top:20px;
-}
-
-</style>
+        .logout-btn {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+        }
+    </style>
 
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="header center">
-
     <h4>⚽ Lets Soccer</h4>
 
     <button class="btn red logout-btn" onclick="logout()">
         Sair
     </button>
-
 </div>
 
+<!-- CONTEÚDO -->
 <div class="container">
 
-    <h5>Bem-vindo!</h5>
-    <p>Sua paixão pelo seu time!</p>
+    <!-- 👇 CLUBE SELECIONADO -->
+    <div id="clubeSelecionado"></div>
+
+    <!-- 👇 CARDS -->
+    <div class="row">
+        <h5>Bem-vindo!</h5>
+        <p>Sua paixão pelo seu time!</p>
+        <p>Escolha seu time:</p>
+        <!-- Cruzeiro -->
+        <div class="col s6">
+            <div class="card hoverable center" onclick="selecionarClube(1)" style="cursor:pointer">
+                <div class="card-content">
+                    <img src="/img/cruzeiro.svg" width="150">
+                    <p><strong class="blue-text text-darken-2">Cruzeiro</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Atlético -->
+        <div class="col s6">
+            <div class="card hoverable center" onclick="selecionarClube(2)" style="cursor:pointer">
+                <div class="card-content">
+                    <img src="/img/atletico-mineiro.svg" width="150">
+                    <p><strong>Atlético</strong></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 👇 MENSAGEM -->
+    <div id="mensagem"></div>
 
 </div>
 
+<!-- SCRIPT -->
 <script>
-
-function logout(){
-
-localStorage.removeItem("token");
-window.location.href="/";
-
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("clubeNome");
+    localStorage.removeItem("clubeEscudo");
+    window.location.href = "/";
 }
-
 </script>
+
+<script src="/js/dashboard.js"></script>
 
 </body>
 </html>
