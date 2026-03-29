@@ -24,6 +24,25 @@
             left: 20px;
             top: 20px;
         }
+
+        .jogador {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #ffeb3b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            cursor: pointer;
+            border: 2px solid transparent;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .jogador.selecionado {
+            border-color: red;
+        }
     </style>
 
 </head>
@@ -82,13 +101,12 @@
 
 </div>
 
-<!-- 🔥 MODAL -->
+<!-- 🔥 MODAL ESCOLHA DE ESQUEMA -->
 <div id="modalEsquema" class="modal">
     <div class="modal-content">
 
         <h5>Escolha o esquema tático</h5>
 
-        <!-- 👇 MENSAGEM DENTRO DO MODAL -->
         <div id="mensagemModal"></div>
 
         <p>
@@ -123,16 +141,29 @@
 
     <div class="modal-footer">
 
-        <!-- VOLTAR -->
         <a href="#!" class="modal-close btn red">
             Voltar
         </a>
 
-        <!-- CONFIRMAR (SEM modal-close!) -->
         <a href="#!" class="btn green" onclick="salvarEsquema()">
             Confirmar
         </a>
 
+    </div>
+</div>
+
+<!-- 🔥 MODAL ESCALAÇÃO DE JOGADORES -->
+<div id="modalJogadores" class="modal">
+    <div class="modal-content">
+        <h5>Escolha seus jogadores</h5>
+        <div id="campoFutebol" class="center" style="position: relative; height: 400px; background: #4caf50;">
+            <!-- Jogadores serão renderizados aqui -->
+        </div>
+        <p id="mensagemJogadores"></p>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close btn red">Cancelar</a>
+        <a href="#!" class="btn green" onclick="confirmarJogadores()">Confirmar</a>
     </div>
 </div>
 
