@@ -7,14 +7,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const token = localStorage.getItem("token");
 
-    let clubeJaSelecionado = false; // 👈 CONTROLE
+    let clubeJaSelecionado = false;
 
     if (!token) {
         window.location.href = "/";
         return;
     }
 
-    // 🔎 Busca clube no backend
     fetch("/usuarios/clube", {
         method: "GET",
         headers: {
@@ -29,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (data) {
 
-            clubeJaSelecionado = true; // 👈 BLOQUEIA NOVAS ESCOLHAS
+            clubeJaSelecionado = true;
 
             let escudo = "";
 
@@ -43,17 +42,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             mostrarClube(data.nome, escudo);
 
-            // 🔒 esconde seleção
             containerTimes.style.display = "none";
             textoEscolha.style.display = "none";
         }
 
     });
 
-    // 🌐 função global
     window.selecionarClube = function (clubeId) {
 
-        // 🚫 BLOQUEIO FRONT
         if (clubeJaSelecionado) {
             mostrarMensagem("Você já escolheu seu time!", "red");
             return;
@@ -77,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(data => {
 
-            clubeJaSelecionado = true; // 👈 TRAVA APÓS ESCOLHA
+            clubeJaSelecionado = true;
 
             let nome = "";
             let escudo = "";
@@ -105,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     };
 
-    // 🎨 destacar card selecionado
     function destacarCard(id) {
 
         const card = document.getElementById(id);
@@ -116,7 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 🎨 render clube
     function mostrarClube(nome, escudo) {
 
         clubeSelecionadoDiv.innerHTML = `
@@ -127,7 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
-    // 💬 mensagem com timeout
     function mostrarMensagem(texto, cor) {
 
         mensagem.innerHTML = `
