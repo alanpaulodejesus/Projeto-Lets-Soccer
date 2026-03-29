@@ -30,7 +30,6 @@
 
 <body>
 
-<!-- HEADER -->
 <div class="header center">
     <h4>⚽ Lets Soccer</h4>
 
@@ -39,22 +38,23 @@
     </button>
 </div>
 
-<!-- CONTEÚDO -->
 <div class="container">
 
-    <!-- 👇 CLUBE SELECIONADO -->
     <div id="clubeSelecionado"></div>
 
-    <!-- 👇 CARDS -->
-    <div class="row">
+</div>
+
+<div class="container">
+
+    <div class="row" id="listaTimes">
         <h5>Bem-vindo!</h5>
         <p>Sua paixão pelo seu time!</p>
-        <p>Escolha seu time:</p>
+        <p id="textoEscolha">Escolha seu time:</p>
         <!-- Cruzeiro -->
         <div class="col s6">
             <div class="card hoverable center" onclick="selecionarClube(1)" style="cursor:pointer">
                 <div class="card-content" id="card-cruzeiro">
-                    <img src="/img/cruzeiro.svg" width="150">
+                    <img src="/img/cruzeiro.svg" width="190">
                     <p><strong class="blue-text text-darken-2">Cruzeiro</strong></p>
                 </div>
             </div>
@@ -63,8 +63,8 @@
         <!-- Atlético -->
         <div class="col s6">
             <div class="card hoverable center" onclick="selecionarClube(2)" style="cursor:pointer">
-                <div class="card-content" id="card-atletico">
-                    <img src="/img/atletico-mineiro.svg" width="150">
+                <div class="card-content" id="card-atleticomg">
+                    <img src="/img/atletico-mineiro.svg" width="190">
                     <p><strong>Atlético</strong></p>
                 </div>
             </div>
@@ -72,22 +72,18 @@
 
     </div>
 
-    <!-- 👇 MENSAGEM -->
     <div id="mensagem"></div>
 
 </div>
 
-<!-- SCRIPT -->
+<script src="/js/dashboard.js"></script>
+
 <script>
-function logout() {
+function logout(){
     localStorage.removeItem("token");
-    localStorage.removeItem("clubeNome");
-    localStorage.removeItem("clubeEscudo");
-    window.location.href = "/";
+    window.location.href="/";
 }
 </script>
-
-<script src="/js/dashboard.js"></script>
 
 </body>
 </html>

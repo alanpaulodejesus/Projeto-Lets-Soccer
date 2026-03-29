@@ -2,6 +2,7 @@ package com.letssoccer.letssoccer.service;
 
 import com.letssoccer.letssoccer.entities.ClubeEntity;
 import com.letssoccer.letssoccer.entities.UsuarioEntity;
+import com.letssoccer.letssoccer.messages.exception.BadRequestException;
 import com.letssoccer.letssoccer.repositories.ClubeRepository;
 import com.letssoccer.letssoccer.repositories.UsuarioRepository;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,10 @@ public class UsuarioClubeService {
 
         UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        if (usuario.getClube() != null) {
+            throw new BadRequestException("Usuário já possui um clube definido!");
+        }
 
         ClubeEntity clube = clubeRepository.findById(clubeId)
                 .orElseThrow(() -> new RuntimeException("Clube não encontrado"));

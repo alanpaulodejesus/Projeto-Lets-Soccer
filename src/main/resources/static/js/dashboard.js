@@ -1,30 +1,51 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     const mensagem = document.getElementById("mensagem");
-    const containerTimes = document.querySelector(".row");
+    const containerTimes = document.getElementById("listaTimes");
     const clubeSelecionadoDiv = document.getElementById("clubeSelecionado");
+    const textoEscolha = document.getElementById("textoEscolha");
 
-    // 🔄 Carrega clube salvo
-    const clubeNome = localStorage.getItem("clubeNome");
-    const clubeEscudo = localStorage.getItem("clubeEscudo");
+    const token = localStorage.getItem("token");
 
-    if (clubeNome && clubeEscudo) {
-        mostrarClube(clubeNome, clubeEscudo);
-
-        if (containerTimes) {
-            containerTimes.style.display = "none";
-        }
+    if (!token) {
+        window.location.href = "/";
+        return;
     }
 
-    // 🌐 Função global para onclick
-    window.selecionarClube = function (clubeId) {
-
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-            mostrarMensagem("Usuário não autenticado", "red");
-            return;
+    // 🔎 Busca clube no backend
+    fetch("/usuarios/clube", {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`
         }
+    })
+    .then(res => {
+        if (res.status === 204) return null;
+        return res.json();
+    })
+    .then(data => {
+
+        if (data) {
+
+            let escudo = "";
+
+            if (data.id === 1) {
+                escudo = "/img/cruzeiro.svg";
+            } else if (data.id === 2) {
+                escudo = "/img/atletico-mineiro.svg";
+            }
+
+            mostrarClube(data.nome, escudo);
+
+            // 🔒 esconde seleção
+            containerTimes.style.display = "none";
+            textoEscolha.style.display = "none";
+        }
+
+    });
+
+    // 🌐 função global
+    window.selecionarClube = function (clubeId) {
 
         fetch("/usuarios/clube", {
             method: "POST",
@@ -36,7 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(res => {
             if (!res.ok) {
-                throw new Error("Erro ao selecionar clube");
+                return res.json().then(err => {
+                    throw new Error(err.mensagem);
+                });
             }
             return res.json();
         })
@@ -53,19 +76,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 escudo = "/img/atletico-mineiro.svg";
             }
 
-            // 💾 salva no navegador
-            localStorage.setItem("clubeNome", nome);
-            localStorage.setItem("clubeEscudo", escudo);
-
             mostrarClube(nome, escudo);
 
-            // ✅ mensagem temporária
             mostrarMensagem(data.mensagem, "green");
 
-            // 👇 esconde os cards
-            if (containerTimes) {
-                containerTimes.style.display = "none";
-            }
+            containerTimes.style.display = "none";
+            textoEscolha.style.display = "none";
 
         })
         .catch(error => {
@@ -74,10 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     };
 
-    // 🎨 Função para renderizar o clube no topo
+    // 🎨 render clube
     function mostrarClube(nome, escudo) {
-
-        if (!clubeSelecionadoDiv) return;
 
         clubeSelecionadoDiv.innerHTML = `
             <div class="center" style="margin-top:20px;">
@@ -87,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
-    // 🧠 Função reutilizável de mensagem com timeout
+    // 💬 mensagem com timeout
     function mostrarMensagem(texto, cor) {
 
         mensagem.innerHTML = `
@@ -96,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `;
 
-        // ⏱ some depois de 3 segundos
         setTimeout(() => {
             mensagem.innerHTML = "";
         }, 3000);
