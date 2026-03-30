@@ -6,10 +6,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const clubeSelecionadoDiv = document.getElementById("clubeSelecionado");
     const textoEscolha = document.getElementById("textoEscolha");
     const btnEsquema = document.getElementById("btnEsquema");
+
     const token = localStorage.getItem("token");
 
-    if(!token){ window.location.href="/"; return; }
-    if(btnEsquema) btnEsquema.style.display="none";
+    if (!token) {
+        window.location.href = "/";
+        return;
+    }
 
     M.Modal.init(document.querySelectorAll('.modal'), { dismissible: false });
 
@@ -17,8 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let jogadoresSelecionados = [];
     let jogadoresClube = [];
     let esquemaAtual = "442";
+    let clubeId = null;
 
-    // Posições fixas (top%, left%) para cada esquema
+    // 🔥 POSIÇÕES DOS ESQUEMAS
     const posicoesEsquemas = {
         "442":[
             {top:"85%", left:"50%"},{top:"65%", left:"15%"},{top:"65%", left:"85%"},
@@ -42,101 +46,198 @@ document.addEventListener("DOMContentLoaded", () => {
         ]
     };
 
-    function mostrarClube(nome, escudo){
-        clubeSelecionadoDiv.innerHTML = `<div class="center" style="margin-top:20px;"><img src="${escudo}" width="80"><h6>Seu time é o <strong>${nome}</strong></h6></div>`;
-    }
+    // =========================
+    // 🔥 BUSCAR CLUBE AO ENTRAR
+    fetch("/usuarios/clube", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` }
+    })
+    .then(res => {
+        if (res.status === 204) return null;
+        return res.json();
+    })
+    .then(data => {
 
-    function mostrarMensagem(texto, cor){
-        mensagem.innerHTML = `<div class="card-panel ${cor} lighten-4"><span>${texto}</span></div>`;
-        setTimeout(()=>{ mensagem.innerHTML=""; },2000);
-    }
+        if (data) {
 
-    function destacarCard(id){
-        const card = document.getElementById(id);
-        if(card){ card.style.border="3px solid green"; card.style.borderRadius="10px"; }
-    }
+            clubeJaSelecionado = true;
+            clubeId = data.id;
 
-    window.selecionarClube = function(clubeId){
-        if(clubeJaSelecionado){ mostrarMensagem("Você já escolheu seu time!", "red"); return; }
-        fetch("/usuarios/clube",{
+            let escudo = data.id === 1
+                ? "/img/cruzeiro.svg"
+                : "/img/atletico-mineiro.svg";
+
+            destacarCard(data.id === 1 ? "card-cruzeiro" : "card-atleticomg");
+            mostrarClube(data.nome, escudo);
+
+            containerTimes.style.display = "none";
+            textoEscolha.style.display = "none";
+
+            if (btnEsquema) btnEsquema.style.display = "inline-block";
+        } else {
+            if (btnEsquema) btnEsquema.style.display = "none";
+        }
+
+    });
+
+    // =========================
+    window.selecionarClube = function(clubeIdSelecionado){
+
+        if (clubeJaSelecionado) {
+            mostrarMensagem("Você já escolheu seu time!", "red");
+            return;
+        }
+
+        fetch("/usuarios/clube", {
             method:"POST",
-            headers:{ "Content-Type":"application/json", Authorization:`Bearer ${token}` },
-            body: JSON.stringify({clubeId})
+            headers:{
+                "Content-Type":"application/json",
+                Authorization:`Bearer ${token}`
+            },
+            body: JSON.stringify({clubeId: clubeIdSelecionado})
         })
         .then(res => !res.ok ? res.json().then(err=>{throw new Error(err.mensagem)}) : res.json())
-        .then(data=>{
+        .then(data => {
+
             clubeJaSelecionado = true;
+            clubeId = clubeIdSelecionado;
+
             let nome = clubeId===1?"Cruzeiro":"Atlético";
             let escudo = clubeId===1?"/img/cruzeiro.svg":"/img/atletico-mineiro.svg";
+
             destacarCard(clubeId===1?"card-cruzeiro":"card-atleticomg");
             mostrarClube(nome, escudo);
+
             mostrarMensagem(data.mensagem,"green");
+
             containerTimes.style.display="none";
             textoEscolha.style.display="none";
+
             if(btnEsquema) btnEsquema.style.display="inline-block";
-        }).catch(err=>mostrarMensagem(err.message,"red"));
+        })
+        .catch(err => mostrarMensagem(err.message,"red"));
     };
 
+    // =========================
     window.salvarEsquema = function(){
+
         const selecionado = document.querySelector('input[name="esquema"]:checked');
-        if(!selecionado){
-            mensagemModal.innerHTML = `<div class="card-panel red lighten-4"><span>Selecione um esquema!</span></div>`;
+
+        if (!selecionado) {
+            mensagemModal.innerHTML = `<div class="card-panel red lighten-4">Selecione um esquema!</div>`;
             setTimeout(()=>mensagemModal.innerHTML="",2000);
             return;
         }
+
         esquemaAtual = selecionado.value;
+
         M.Modal.getInstance(document.getElementById('modalEsquema')).close();
-        abrirModalJogadores(esquemaAtual);
+
+        abrirModalJogadores();
     };
 
-    window.abrirModalJogadores = function(esquema){
+    // =========================
+    function abrirModalJogadores(){
+
         const modal = M.Modal.getInstance(document.getElementById('modalJogadores'));
         modal.open();
+
         const campo = document.getElementById("campoFutebol");
-        campo.innerHTML="";
-        jogadoresSelecionados=[];
-        fetch("/clube/1/jogador",{headers:{Authorization:`Bearer ${token}`}})
-        .then(res=>res.json())
-        .then(data=>{
+        campo.innerHTML = "";
+        jogadoresSelecionados = [];
+
+        fetch(`/clube/${clubeId}/jogador`, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+        .then(res => res.json())
+        .then(data => {
+
             jogadoresClube = data;
-            const posicoes = posicoesEsquemas[esquema];
-            posicoes.forEach((pos,i)=>{
+
+            posicoesEsquemas[esquemaAtual].forEach((pos, i) => {
+
                 const jogador = data[i];
+
                 const div = document.createElement("div");
                 div.classList.add("posicao");
+
                 div.style.top = pos.top;
                 div.style.left = pos.left;
+
                 div.title = jogador.nome;
-                div.onclick = ()=>{
-                    if(div.classList.contains("selecionada")){
+
+                div.onclick = () => {
+
+                    if (div.classList.contains("selecionada")) {
                         div.classList.remove("selecionada");
-                        jogadoresSelecionados = jogadoresSelecionados.filter(id=>id!==jogador.id);
-                    }else{
-                        if(jogadoresSelecionados.length>=11){ alert("Só 11 jogadores permitidos!"); return; }
+                        jogadoresSelecionados =
+                            jogadoresSelecionados.filter(id => id !== jogador.id);
+                    } else {
+
+                        if (jogadoresSelecionados.length >= 11) {
+                            alert("Só 11 jogadores!");
+                            return;
+                        }
+
                         div.classList.add("selecionada");
                         jogadoresSelecionados.push(jogador.id);
                     }
                 };
+
                 campo.appendChild(div);
             });
-        });
-    };
 
+        });
+    }
+
+    // =========================
     window.confirmarJogadores = function(){
-        if(jogadoresSelecionados.length!==11){
-            document.getElementById("mensagemJogadores").innerText="Selecione exatamente 11 jogadores!";
+
+        if (jogadoresSelecionados.length !== 11) {
+            document.getElementById("mensagemJogadores").innerText =
+                "Selecione exatamente 11 jogadores!";
             return;
         }
-        fetch(`http://localhost:8080/clubes/1/escalacoes?esquema=${esquemaAtual}`,{
+
+        fetch(`http://localhost:8080/clubes/${clubeId}/escalacoes?esquema=${esquemaAtual}`, {
             method:"POST",
-            headers:{ "Content-Type":"application/json", Authorization:`Bearer ${token}` },
-            body: JSON.stringify({jogadoresIds:jogadoresSelecionados})
+            headers:{
+                "Content-Type":"application/json",
+                Authorization:`Bearer ${token}`
+            },
+            body: JSON.stringify({ jogadoresIds: jogadoresSelecionados })
         })
-        .then(res=>{ if(!res.ok) throw new Error("Erro ao salvar escalação"); return res.json(); })
-        .then(()=>{
+        .then(res => {
+            if (!res.ok) throw new Error("Erro ao salvar escalação");
+            return res.json();
+        })
+        .then(() => {
             alert("Escalação salva com sucesso!");
             M.Modal.getInstance(document.getElementById('modalJogadores')).close();
         })
-        .catch(err=>alert(err.message));
+        .catch(err => alert(err.message));
     };
+
+    // =========================
+    function mostrarClube(nome, escudo){
+        clubeSelecionadoDiv.innerHTML = `
+            <div class="center" style="margin-top:20px;">
+                <img src="${escudo}" width="80">
+                <h6>Seu time é o <strong>${nome}</strong></h6>
+            </div>`;
+    }
+
+    function mostrarMensagem(texto, cor){
+        mensagem.innerHTML = `<div class="card-panel ${cor} lighten-4">${texto}</div>`;
+        setTimeout(()=>mensagem.innerHTML="",2000);
+    }
+
+    function destacarCard(id){
+        const card = document.getElementById(id);
+        if(card){
+            card.style.border="3px solid green";
+            card.style.borderRadius="10px";
+        }
+    }
+
 });
