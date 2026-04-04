@@ -4,43 +4,48 @@ INSERT INTO jogador (nome, posicao, clube_id)
 VALUES
 -- Goleiros
 ('Cássio', 'Goleiro', 1),
-('Léo Aragão', 'Goleiro', 1),
+('Matheus Cunha', 'Goleiro', 1),
 ('Otávio', 'Goleiro', 1),
 
 -- Laterais
-('Marlon', 'Lateral Direito', 1),
-('Kaiki', 'Lateral Esquerdo', 1),
-('William', 'Lateral Direito', 1),
-('Fagner', 'Lateral Direito', 1),
+('William', 'Lateral', 1),
+('Fagner', 'Lateral', 1),
+('Kaiki', 'Lateral', 1),
+('Kauã Moraes', 'Lateral', 1),
+('Kauã Prates', 'Lateral', 1),
 
 -- Zagueiros
 ('Fabrício Bruno', 'Zagueiro', 1),
-('Lucas Villalba', 'Zagueiro', 1),
-('Jonathan Jesus', 'Zagueiro', 1),
 ('João Marcelo', 'Zagueiro', 1),
+('Jonathan Jesus', 'Zagueiro', 1),
+('Lucas Villalba', 'Zagueiro', 1),
+('Bruno Alves', 'Zagueiro', 1),
+('Janderson', 'Zagueiro', 1),
 
--- Volantes
-('Matheus Henrique', 'Volante', 1),
-('Walace', 'Volante', 1),
+-- Volantes / Meio-campistas defensivos
 ('Lucas Romero', 'Volante', 1),
 ('Lucas Silva', 'Volante', 1),
+('Walace', 'Volante', 1),
+('Matheus Henrique', 'Volante', 1),
 ('Christian', 'Volante', 1),
 
--- Meio-campistas
-('Matheus Pereira', 'Meio-campista', 1),
-('Eduardo', 'Meio-campista', 1),
-('Vitinho', 'Meio-campista', 1),
-('Rodriguinho', 'Meio-campista', 1),
-('Japa', 'Meio-campista', 1),
+-- Meias
+('Matheus Pereira', 'Meia', 1),
+('Gerson', 'Meia', 1),
+('Japa', 'Meia', 1),
+('Rodriguinho', 'Meia', 1),
+('Vitinho', 'Meia', 1),
+('Ryan Guilherme', 'Meia', 1),
 
 -- Atacantes
-('Gabigol', 'Atacante', 1),
-('Bolasie', 'Atacante', 1),
-('Marquinhos', 'Atacante', 1),
-('Tevis', 'Atacante', 1),
 ('Kaio Jorge', 'Atacante', 1),
-('Lautaro Díaz', 'Atacante', 1),
-('Juan Dinenno', 'Atacante', 1);
+('Juan Dinenno', 'Atacante', 1),
+('Wanderson', 'Atacante', 1),
+('Marquinhos', 'Atacante', 1),
+('Chico da Costa', 'Atacante', 1),
+('Néiser Villarreal', 'Atacante', 1),
+('Kaique Kenji', 'Atacante', 1),
+('Keny Arroyo', 'Atacante', 1);
 
 INSERT INTO clube (nome, informacao) VALUES ('Atlético Mineiro', 'Minas Gerais');
 INSERT INTO jogador (nome, posicao, clube_id)
@@ -51,10 +56,10 @@ VALUES
 ('Robert', 'Goleiro', 2),
 
 -- Laterais
-('Saravia', 'Lateral Direito', 2),
-('Natanael', 'Lateral Direito', 2),
-('Guilherme Arana', 'Lateral Esquerdo', 2),
-('Caio', 'Lateral Esquerdo', 2),
+('Saravia', 'Lateral', 2),
+('Natanael', 'Lateral', 2),
+('Guilherme Arana', 'Lateral', 2),
+('Caio', 'Lateral', 2),
 
 -- Zagueiros
 ('Junior Alonso', 'Zagueiro', 2),
@@ -70,10 +75,10 @@ VALUES
 ('Alexsander', 'Volante', 2),
 
 -- Meio-campistas
-('Gustavo Scarpa', 'Meio-campista', 2),
-('Igor Gomes', 'Meio-campista', 2),
-('Bernard', 'Meio-campista', 2),
-('Reinier', 'Meio-campista', 2),
+('Gustavo Scarpa', 'Meia', 2),
+('Igor Gomes', 'Meia', 2),
+('Bernard', 'Meia', 2),
+('Reinier', 'Meia', 2),
 
 -- Atacantes
 ('Hulk', 'Atacante', 2),
