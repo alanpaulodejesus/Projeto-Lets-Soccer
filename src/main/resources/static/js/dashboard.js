@@ -88,18 +88,29 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // =========================
-    window.selecionarClube = function(id){
+window.selecionarClube = function(id){
 
-        fetch("/usuarios/clube", {
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json",
-                Authorization:`Bearer ${token}`
-            },
-            body: JSON.stringify({clubeId:id})
-        })
-        .then(() => location.reload());
-    };
+    fetch("/usuarios/clube", {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            Authorization:`Bearer ${token}`
+        },
+        body: JSON.stringify({clubeId:id})
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        mostrarMensagem(data.mensagem, "green");
+
+        setTimeout(() => {
+            location.reload();
+        }, 1500);
+    })
+    .catch(() => {
+        mostrarMensagem("Erro ao definir clube", "red");
+    });
+};
 
     // =========================
     window.salvarEsquema = function(){
@@ -204,5 +215,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <h6>Seu time é o <strong>${nome}</strong></h6>
             </div>`;
     }
-
+function mostrarMensagem(texto, cor){
+    mensagem.innerHTML = `<div class="card-panel ${cor} lighten-4">${texto}</div>`;
+    setTimeout(()=>mensagem.innerHTML="",2000);
+}
 });
