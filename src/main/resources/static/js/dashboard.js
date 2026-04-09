@@ -18,15 +18,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let clubeJaSelecionado = false;
     let jogadoresSelecionados = [];
-    let jogadoresClube = [];
     let esquemaAtual = "442";
     let clubeId = null;
 
     // =========================
-    // 🔥 POSIÇÕES (estilo FIFA)
+    // POSIÇÕES VISUAIS
     const posicoesEsquemas = {
         "442":[
-            {top:"90%",left:"50%"}, // GOL
+            {top:"90%",left:"50%"},
             {top:"70%",left:"20%"},{top:"70%",left:"80%"},
             {top:"60%",left:"35%"},{top:"60%",left:"65%"},
             {top:"45%",left:"20%"},{top:"45%",left:"40%"},{top:"45%",left:"60%"},{top:"45%",left:"80%"},
@@ -55,7 +54,16 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // =========================
-    // 🔥 BUSCAR CLUBE AO ENTRAR
+    // NOMES DAS POSIÇÕES
+    const nomesPosicoes = {
+        "442":["GOL","LD","LE","ZAG","ZAG","MEI","MEI","MEI","MEI","ATA","ATA"],
+        "352":["GOL","ZAG","ZAG","ZAG","ALA","MEI","MEI","ALA","ATA","ATA","MEI"],
+        "541":["GOL","LAT","ZAG","ZAG","ZAG","LAT","MEI","MEI","MEI","ATA","ATA"],
+        "244":["GOL","ZAG","ZAG","MEI","MEI","MEI","MEI","MEI","ATA","ATA","ATA"]
+    };
+
+    // =========================
+    // BUSCAR CLUBE
     fetch("/usuarios/clube", {
         headers: { Authorization: `Bearer ${token}` }
     })
@@ -80,13 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // =========================
-    // 🔥 ESCOLHER CLUBE
     window.selecionarClube = function(id){
-
-        if (clubeJaSelecionado) {
-            mostrarMensagem("Você já escolheu seu time!", "red");
-            return;
-        }
 
         fetch("/usuarios/clube", {
             method:"POST",
@@ -96,28 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             body: JSON.stringify({clubeId:id})
         })
-        .then(res => !res.ok
-            ? res.json().then(err=>{throw new Error(err.mensagem)})
-            : res.json()
-        )
-        .then(data=>{
-
-            clubeJaSelecionado = true;
-            clubeId = id;
-
-            mostrarClube(
-                id===1?"Cruzeiro":"Atlético",
-                id===1?"/img/cruzeiro.svg":"/img/atletico-mineiro.svg"
-            );
-
-            // 🔥 AQUI ESTAVA O BUG (mensagem perdida)
-            mostrarMensagem(data.mensagem || "Clube definido com sucesso!", "green");
-
-            containerTimes.style.display="none";
-            textoEscolha.style.display="none";
-            btnEsquema.style.display="inline-block";
-        })
-        .catch(err => mostrarMensagem(err.message,"red"));
+        .then(() => location.reload());
     };
 
     // =========================
@@ -126,8 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const selecionado = document.querySelector('input[name="esquema"]:checked');
 
         if (!selecionado) {
-            mensagemModal.innerHTML = `<div class="card-panel red lighten-4">Selecione um esquema!</div>`;
-            setTimeout(()=>mensagemModal.innerHTML="",2000);
+            mensagemModal.innerHTML = "Selecione um esquema!";
             return;
         }
 
@@ -153,11 +133,10 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(res => res.json())
         .then(data => {
 
-            jogadoresClube = data;
-
             posicoesEsquemas[esquemaAtual].forEach((pos, i) => {
 
-                const jogador = data[i];
+                const jogador = data[i] || null;
+                const posicaoNome = nomesPosicoes[esquemaAtual][i];
 
                 const div = document.createElement("div");
                 div.classList.add("posicao");
@@ -166,15 +145,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 div.style.left = pos.left;
 
                 div.innerHTML = `
-                    <div class="jogador-circle">
-                        ${jogador.nome.split(" ")[0]}
-                    </div>
-                    <div class="jogador-nome">
-                        ${jogador.nome}
-                    </div>
+                    <div class="jogador-circle">${posicaoNome}</div>
+                    <div class="jogador-nome">${jogador ? jogador.nome : ""}</div>
                 `;
 
                 div.onclick = () => {
+
+                    if (!jogador) return;
 
                     if (div.classList.contains("ocupada")) {
                         div.classList.remove("ocupada");
@@ -217,22 +194,15 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(() => {
             alert("Escalação salva com sucesso!");
-            M.Modal.getInstance(document.getElementById('modalJogadores')).close();
         });
     };
 
-    // =========================
     function mostrarClube(nome, escudo){
         clubeSelecionadoDiv.innerHTML = `
             <div class="center" style="margin-top:20px;">
                 <img src="${escudo}" width="80">
                 <h6>Seu time é o <strong>${nome}</strong></h6>
             </div>`;
-    }
-
-    function mostrarMensagem(texto, cor){
-        mensagem.innerHTML = `<div class="card-panel ${cor} lighten-4">${texto}</div>`;
-        setTimeout(()=>mensagem.innerHTML="",2000);
     }
 
 });
