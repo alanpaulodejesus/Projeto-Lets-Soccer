@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "442": [
             { top: "90%", left: "50%" },
             { top: "70%", left: "20%" }, { top: "70%", left: "80%" },
-            { top: "60%", left: "35%" }, { top: "60%", left: "65%" },
+            { top: "80%", left: "35%" }, { top: "80%", left: "65%" },
             { top: "45%", left: "20%" }, { top: "45%", left: "40%" }, { top: "45%", left: "60%" }, { top: "45%", left: "80%" },
             { top: "20%", left: "40%" }, { top: "20%", left: "60%" }
         ],
