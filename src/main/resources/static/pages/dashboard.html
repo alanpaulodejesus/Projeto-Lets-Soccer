@@ -27,15 +27,14 @@
 
         /* CAMPO FUTEBOL */
         #campoFutebol {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            max-height: 60vh;
-            aspect-ratio: 3 / 4;
-            margin: 0 auto;
-            background: linear-gradient(#2e7d32, #1b5e20);
-            border-radius: 15px;
-            overflow: hidden;
+              position: relative;
+              width: 100%;
+              max-width: 500px;
+              aspect-ratio: 3 / 4;
+              margin: 0 auto;
+              background: linear-gradient(#2e7d32, #1b5e20);
+              border-radius: 15px;
+              overflow: hidden;
         }
 
         /* LINHAS */
@@ -92,13 +91,26 @@
         }
 
         .modal {
-            max-height: 95% !important;
-            width: 85% !important;
+    width: 80% !important;
+    height: 90vh !important;
+    max-height: 90vh !important;
+    display: flex;
+    flex-direction: column;
         }
 
         .modal-content {
-            overflow: hidden !important;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
         }
+
+        .modal-footer {
+    flex-shrink: 0;
+    background: white;
+}
     </style>
 </head>
 
