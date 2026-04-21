@@ -7,6 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const textoEscolha = document.getElementById("textoEscolha");
     const btnEsquema = document.getElementById("btnEsquema");
 
+    const modalEsquemaEl = document.getElementById("modalEsquema");
+    const modalJogadoresEl = document.getElementById("modalJogadores");
+
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -16,13 +19,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     M.Modal.init(document.querySelectorAll(".modal"), { dismissible: false });
 
-    let clubeJaSelecionado = false;
+    // =========================
+    // ESTADO DA APLICAÇÃO (CRÍTICO)
+    let clubeSelecionado = false;
+    let esquemaSelecionado = false;
+
     let jogadoresSelecionados = [];
     let esquemaAtual = "442";
     let clubeId = null;
 
+    // 🔥 GARANTE UI FECHADA NO INÍCIO
+    btnEsquema.style.display = "none";
+    modalEsquemaEl.style.display = "none";
+    modalJogadoresEl.style.display = "none";
+
     // =========================
-    // POSIÇÕES VISUAIS
+    // POSIÇÕES
     const posicoesEsquemas = {
         "442": [
             { top: "90%", left: "50%" },
@@ -30,38 +42,11 @@ document.addEventListener("DOMContentLoaded", () => {
             { top: "60%", left: "35%" }, { top: "60%", left: "65%" },
             { top: "45%", left: "20%" }, { top: "45%", left: "40%" }, { top: "45%", left: "60%" }, { top: "45%", left: "80%" },
             { top: "20%", left: "40%" }, { top: "20%", left: "60%" }
-        ],
-        "352": [
-            { top: "90%", left: "50%" },
-            { top: "70%", left: "30%" }, { top: "70%", left: "50%" }, { top: "70%", left: "70%" },
-            { top: "50%", left: "15%" }, { top: "50%", left: "35%" }, { top: "50%", left: "65%" }, { top: "50%", left: "85%" },
-            { top: "25%", left: "40%" }, { top: "25%", left: "60%" },
-            { top: "10%", left: "50%" }
-        ],
-        "541": [
-            { top: "90%", left: "50%" },
-            { top: "75%", left: "10%" }, { top: "75%", left: "30%" }, { top: "75%", left: "50%" },
-            { top: "75%", left: "70%" }, { top: "75%", left: "90%" },
-            { top: "50%", left: "30%" }, { top: "50%", left: "50%" }, { top: "50%", left: "70%" },
-            { top: "20%", left: "50%" },
-            { top: "10%", left: "50%" }
-        ],
-        "244": [
-            { top: "90%", left: "50%" },
-            { top: "65%", left: "30%" }, { top: "65%", left: "70%" },
-            { top: "50%", left: "10%" }, { top: "50%", left: "30%" }, { top: "50%", left: "50%" },
-            { top: "50%", left: "70%" }, { top: "50%", left: "90%" },
-            { top: "25%", left: "20%" }, { top: "25%", left: "50%" }, { top: "25%", left: "80%" }
         ]
     };
 
-    // =========================
-    // NOMES DAS POSIÇÕES
     const nomesPosicoes = {
-        "442": ["GOL", "LD", "LE", "ZAG", "ZAG", "MEI", "MEI", "MEI", "MEI", "ATA", "ATA"],
-        "352": ["GOL", "ZAG", "ZAG", "ZAG", "ALA", "MEI", "MEI", "ALA", "ATA", "ATA", "MEI"],
-        "541": ["GOL", "LAT", "ZAG", "ZAG", "ZAG", "LAT", "MEI", "MEI", "MEI", "ATA", "ATA"],
-        "244": ["GOL", "ZAG", "ZAG", "MEI", "MEI", "MEI", "MEI", "MEI", "ATA", "ATA", "ATA"]
+        "442": ["GOL", "LD", "LE", "ZAG", "ZAG", "MEI", "MEI", "MEI", "MEI", "ATA", "ATA"]
     };
 
     // =========================
@@ -73,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(data => {
 
             if (data) {
-                clubeJaSelecionado = true;
+                clubeSelecionado = true;
                 clubeId = data.id;
 
                 mostrarClube(
@@ -83,9 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 containerTimes.style.display = "none";
                 textoEscolha.style.display = "none";
+
                 btnEsquema.style.display = "inline-block";
-            } else {
-                btnEsquema.style.display = "none";
             }
         });
 
@@ -106,9 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 mostrarMensagem(data.mensagem, "green");
 
-                setTimeout(() => {
-                    location.reload();
-                }, 1500);
+                setTimeout(() => location.reload(), 1500);
             })
             .catch(() => {
                 mostrarMensagem("Erro ao definir clube", "red");
@@ -116,8 +98,13 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // =========================
-    // SALVAR ESQUEMA
+    // SALVAR ESQUEMA (TRAVADO)
     window.salvarEsquema = function () {
+
+        if (!clubeSelecionado) {
+            mostrarMensagem("Selecione um clube primeiro!", "red");
+            return;
+        }
 
         const selecionado = document.querySelector('input[name="esquema"]:checked');
 
@@ -127,16 +114,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         esquemaAtual = selecionado.value;
+        esquemaSelecionado = true;
 
-        M.Modal.getInstance(document.getElementById("modalEsquema")).close();
+        const modal = M.Modal.getInstance(modalEsquemaEl);
+        modal.close();
+
         abrirModalJogadores();
     };
 
     // =========================
-    // ABRIR MODAL JOGADORES
+    // ABRIR ESCALAÇÃO (BLOQUEIO TOTAL)
     function abrirModalJogadores() {
 
-        const modal = M.Modal.getInstance(document.getElementById("modalJogadores"));
+        if (!clubeSelecionado || !esquemaSelecionado) {
+            mostrarMensagem("Complete as etapas antes de montar a escalação!", "red");
+            return;
+        }
+
+        const modal = M.Modal.getInstance(modalJogadoresEl);
         modal.open();
 
         const campo = document.getElementById("campoFutebol");
@@ -208,13 +203,10 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             body: JSON.stringify({ jogadoresIds: jogadoresSelecionados })
         })
-            .then(() => {
-                alert("Escalação salva com sucesso!");
-            });
+            .then(() => alert("Escalação salva com sucesso!"));
     };
 
     // =========================
-
     function mostrarClube(nome, escudo) {
         clubeSelecionadoDiv.innerHTML = `
             <div class="center" style="margin-top:20px;">
