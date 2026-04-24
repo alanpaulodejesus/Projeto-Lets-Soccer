@@ -57,10 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
         ],
         "244": [
             { top: "90%", left: "50%" },
-            { top: "65%", left: "30%" }, { top: "65%", left: "70%" },
-            { top: "50%", left: "10%" }, { top: "50%", left: "30%" }, { top: "50%", left: "50%" },
-            { top: "50%", left: "70%" }, { top: "50%", left: "90%" },
-            { top: "25%", left: "20%" }, { top: "25%", left: "50%" }, { top: "25%", left: "80%" }
+            { top: "80%", left: "30%" }, { top: "80%", left: "70%" },
+            { top: "50%", left: "20%" }, { top: "60%", left: "35%" }, { top: "60%", left: "65%" }, { top: "50%", left: "80%" },
+            { top: "20%", left: "35%" }, { top: "35%", left: "35%" }, { top: "35%", left: "65%" }, { top: "20%", left: "65%" }
         ]
     };
 
@@ -68,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "442": ["GOL","LAT","LAT","ZAG","ZAG","MEI","MEI","MEI","MEI","ATA","ATA"],
         "352": ["GOL","ZAG","ZAG","ZAG","ALA","MEI","MEI","MEI","ALA","ATA","ATA"],
         "541": ["GOL","LAT","ZAG","ZAG","ZAG","LAT","MEI","MEI","MEI","MEI","ATA"],
-        "244": ["GOL","ZAG","ZAG","VOL","VOL","VOL","MEI","MEI","MEI","ATA","ATA"]
+        "244": ["GOL","ZAG","ZAG","MEI","VOL","VOL","MEI","ATA","ATA","ATA","ATA"]
     };
 
     // =========================
