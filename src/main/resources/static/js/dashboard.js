@@ -60,10 +60,10 @@ const posicoesEsquemas={
 
 442:[
 {top:"90%",left:"50%"},
-{top:"80%",left:"35%"},
-{top:"80%",left:"65%"},
 {top:"70%",left:"15%"},
 {top:"70%",left:"85%"},
+{top:"80%",left:"35%"},
+{top:"80%",left:"65%"},
 {top:"45%",left:"20%"},
 {top:"45%",left:"40%"},
 {top:"45%",left:"60%"},
@@ -130,9 +130,9 @@ const nomesPosicoes={
 352:[
 "GOL",
 "ZAG","ZAG","ZAG",
-"ALA",
+"LAT",
 "MEI","MEI","MEI",
-"ALA",
+"LAT",
 "ATA","ATA"
 ],
 
