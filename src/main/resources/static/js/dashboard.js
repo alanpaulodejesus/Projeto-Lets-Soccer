@@ -37,8 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const posicoesEsquemas = {
         "442": [
             { top: "90%", left: "50%" },
-            { top: "70%", left: "20%" }, { top: "70%", left: "80%" },
             { top: "80%", left: "35%" }, { top: "80%", left: "65%" },
+            { top: "70%", left: "15%" }, { top: "70%", left: "85%" },
             { top: "45%", left: "20%" }, { top: "45%", left: "40%" }, { top: "45%", left: "60%" }, { top: "45%", left: "80%" },
             { top: "20%", left: "40%" }, { top: "20%", left: "60%" }
         ],
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const nomesPosicoes = {
         "442": ["GOL","LAT","LAT","ZAG","ZAG","MEI","MEI","MEI","MEI","ATA","ATA"],
         "352": ["GOL","ZAG","ZAG","ZAG","ALA","MEI","MEI","MEI","ALA","ATA","ATA"],
-        "541": ["GOL","LAT","ZAG","ZAG","ZAG","LAT","MEI","MEI","MEI","MEI","ATA"],
+        "541": ["GOL","LAT","ZAG","ZAG","ZAG","LAT","MEI","VOL","VOL","MEI","ATA"],
         "244": ["GOL","ZAG","ZAG","MEI","VOL","VOL","MEI","ATA","ATA","ATA","ATA"]
     };
 
