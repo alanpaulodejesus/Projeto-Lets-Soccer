@@ -28,14 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let esquemaAtual = null;
     let jogadoresSelecionados = [];
 
-    // trava inicial
     btnEsquema.style.display = "none";
-
     modalEsquemaEl.style.display = "none";
     modalJogadoresEl.style.display = "none";
 
     // =========================
-    // ESQUEMAS (COMPLETO)
+    // ESQUEMAS
     const posicoesEsquemas = {
         "442": [
             { top: "90%", left: "50%" },
@@ -46,33 +44,30 @@ document.addEventListener("DOMContentLoaded", () => {
         ],
         "352": [
             { top: "90%", left: "50%" },
-            { top: "70%", left: "30%" }, { top: "70%", left: "50%" }, { top: "70%", left: "70%" },
-            { top: "50%", left: "15%" }, { top: "50%", left: "35%" }, { top: "50%", left: "65%" }, { top: "50%", left: "85%" },
-            { top: "25%", left: "40%" }, { top: "25%", left: "60%" },
-            { top: "10%", left: "50%" }
+            { top: "75%", left: "30%" }, { top: "75%", left: "50%" }, { top: "75%", left: "70%" },
+            { top: "50%", left: "10%" }, { top: "55%", left: "35%" }, { top: "55%", left: "50%" }, { top: "55%", left: "65%" }, { top: "50%", left: "90%" },
+            { top: "25%", left: "40%" }, { top: "25%", left: "60%" }
         ],
         "541": [
             { top: "90%", left: "50%" },
-            { top: "75%", left: "10%" }, { top: "75%", left: "30%" }, { top: "75%", left: "50%" },
-            { top: "75%", left: "70%" }, { top: "75%", left: "90%" },
-            { top: "50%", left: "30%" }, { top: "50%", left: "50%" }, { top: "50%", left: "70%" },
-            { top: "20%", left: "50%" },
-            { top: "10%", left: "50%" }
+            { top: "70%", left: "10%" }, { top: "75%", left: "30%" }, { top: "75%", left: "50%" },
+            { top: "75%", left: "70%" }, { top: "70%", left: "90%" },
+            { top: "40%", left: "20%" }, { top: "55%", left: "40%" }, { top: "55%", left: "60%" }, { top: "40%", left: "80%" },
+            { top: "24%", left: "50%" }
         ],
         "244": [
             { top: "90%", left: "50%" },
-            { top: "65%", left: "30%" }, { top: "65%", left: "70%" },
-            { top: "50%", left: "10%" }, { top: "50%", left: "30%" }, { top: "50%", left: "50%" },
-            { top: "50%", left: "70%" }, { top: "50%", left: "90%" },
-            { top: "25%", left: "20%" }, { top: "25%", left: "50%" }, { top: "25%", left: "80%" }
+            { top: "80%", left: "30%" }, { top: "80%", left: "70%" },
+            { top: "50%", left: "20%" }, { top: "60%", left: "35%" }, { top: "60%", left: "65%" }, { top: "50%", left: "80%" },
+            { top: "20%", left: "35%" }, { top: "35%", left: "35%" }, { top: "35%", left: "65%" }, { top: "20%", left: "65%" }
         ]
     };
 
     const nomesPosicoes = {
-        "442": ["GOL","LD","LE","ZAG","ZAG","MEI","MEI","MEI","MEI","ATA","ATA"],
-        "352": ["GOL","ZAG","ZAG","ZAG","ALA","MEI","MEI","ALA","ATA","ATA","MEI"],
-        "541": ["GOL","LAT","ZAG","ZAG","ZAG","LAT","MEI","MEI","MEI","ATA","ATA"],
-        "244": ["GOL","ZAG","ZAG","MEI","MEI","MEI","MEI","MEI","ATA","ATA","ATA"]
+        "442": ["GOL","LAT","LAT","ZAG","ZAG","MEI","MEI","MEI","MEI","ATA","ATA"],
+        "352": ["GOL","ZAG","ZAG","ZAG","ALA","MEI","MEI","MEI","ALA","ATA","ATA"],
+        "541": ["GOL","LAT","ZAG","ZAG","ZAG","LAT","MEI","MEI","MEI","MEI","ATA"],
+        "244": ["GOL","ZAG","ZAG","MEI","VOL","VOL","MEI","ATA","ATA","ATA","ATA"]
     };
 
     // =========================
@@ -95,7 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         containerTimes.style.display = "none";
         textoEscolha.style.display = "none";
-
         btnEsquema.style.display = "inline-block";
     });
 
@@ -137,7 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
         esquemaSelecionado = true;
 
         M.Modal.getInstance(modalEsquemaEl).close();
-
         abrirModalJogadores();
     };
 
@@ -170,9 +163,15 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(res => res.json())
         .then(data => {
 
+            const usados = new Set();
+
             posicoes.forEach((pos, i) => {
 
-                const jogador = data[i] || null;
+                const jogador = data.find(j =>
+                    j.posicao === nomes[i] && !usados.has(j.id)
+                ) || null;
+
+                if (jogador) usados.add(jogador.id);
 
                 const div = document.createElement("div");
                 div.classList.add("posicao");
