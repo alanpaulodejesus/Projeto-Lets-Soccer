@@ -1,243 +1,483 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",()=>{
 
-    const mensagem = document.getElementById("mensagem");
-    const mensagemModal = document.getElementById("mensagemModal");
-    const containerTimes = document.getElementById("listaTimes");
-    const clubeSelecionadoDiv = document.getElementById("clubeSelecionado");
-    const textoEscolha = document.getElementById("textoEscolha");
-    const btnEsquema = document.getElementById("btnEsquema");
+const mensagem=document.getElementById("mensagem");
+const mensagemModal=document.getElementById("mensagemModal");
+const containerTimes=document.getElementById("listaTimes");
+const clubeSelecionadoDiv=document.getElementById("clubeSelecionado");
+const textoEscolha=document.getElementById("textoEscolha");
+const btnEsquema=document.getElementById("btnEsquema");
 
-    const modalEsquemaEl = document.getElementById("modalEsquema");
-    const modalJogadoresEl = document.getElementById("modalJogadores");
+const modalEsquemaEl=document.getElementById("modalEsquema");
+const modalJogadoresEl=document.getElementById("modalJogadores");
+const modalEscolhaEl=document.getElementById("modalEscolhaJogador");
 
-    const token = localStorage.getItem("token");
+const token=localStorage.getItem("token");
 
-    if (!token) {
-        window.location.href = "/";
-        return;
-    }
+if(!token){
+window.location.href="/";
+return;
+}
 
-    M.Modal.init(document.querySelectorAll(".modal"), { dismissible: false });
 
-    // =========================
-    // ESTADO
-    let clubeSelecionado = false;
-    let esquemaSelecionado = false;
+/* evita modal quebrado */
+M.Modal.init(
+document.querySelectorAll(
+"#modalEsquema,#modalJogadores"
+),
+{dismissible:false}
+);
 
-    let clubeId = null;
-    let esquemaAtual = null;
-    let jogadoresSelecionados = [];
+M.Modal.init(
+document.querySelectorAll(
+"#modalEscolhaJogador"
+),
+{dismissible:false}
+);
 
-    btnEsquema.style.display = "none";
-    modalEsquemaEl.style.display = "none";
-    modalJogadoresEl.style.display = "none";
+modalEscolhaEl.style.display="none";
 
-    // =========================
-    // ESQUEMAS
-    const posicoesEsquemas = {
-        "442": [
-            { top: "90%", left: "50%" },
-            { top: "80%", left: "35%" }, { top: "80%", left: "65%" },
-            { top: "70%", left: "15%" }, { top: "70%", left: "85%" },
-            { top: "45%", left: "20%" }, { top: "45%", left: "40%" }, { top: "45%", left: "60%" }, { top: "45%", left: "80%" },
-            { top: "20%", left: "40%" }, { top: "20%", left: "60%" }
-        ],
-        "352": [
-            { top: "90%", left: "50%" },
-            { top: "75%", left: "30%" }, { top: "75%", left: "50%" }, { top: "75%", left: "70%" },
-            { top: "50%", left: "15%" }, { top: "55%", left: "35%" }, { top: "55%", left: "50%" }, { top: "55%", left: "65%" }, { top: "50%", left: "85%" },
-            { top: "25%", left: "40%" }, { top: "25%", left: "60%" }
-        ],
-        "541": [
-            { top: "90%", left: "50%" },
-            { top: "70%", left: "10%" }, { top: "75%", left: "30%" }, { top: "75%", left: "50%" },
-            { top: "75%", left: "70%" }, { top: "70%", left: "90%" },
-            { top: "40%", left: "20%" }, { top: "55%", left: "40%" }, { top: "55%", left: "60%" }, { top: "40%", left: "80%" },
-            { top: "24%", left: "50%" }
-        ],
-        "244": [
-            { top: "90%", left: "50%" },
-            { top: "80%", left: "30%" }, { top: "80%", left: "70%" },
-            { top: "50%", left: "20%" }, { top: "60%", left: "35%" }, { top: "60%", left: "65%" }, { top: "50%", left: "80%" },
-            { top: "20%", left: "35%" }, { top: "35%", left: "35%" }, { top: "35%", left: "65%" }, { top: "20%", left: "65%" }
-        ]
-    };
 
-    const nomesPosicoes = {
-        "442": ["GOL","LAT","LAT","ZAG","ZAG","MEI","MEI","MEI","MEI","ATA","ATA"],
-        "352": ["GOL","ZAG","ZAG","ZAG","ALA","MEI","MEI","MEI","ALA","ATA","ATA"],
-        "541": ["GOL","LAT","ZAG","ZAG","ZAG","LAT","MEI","VOL","VOL","MEI","ATA"],
-        "244": ["GOL","ZAG","ZAG","MEI","VOL","VOL","MEI","ATA","ATA","ATA","ATA"]
-    };
+let clubeSelecionado=false;
+let esquemaSelecionado=false;
 
-    // =========================
-    // CLUBE
-    fetch("/usuarios/clube", {
-        headers: { Authorization: `Bearer ${token}` }
-    })
-    .then(res => res.status === 204 ? null : res.json())
-    .then(data => {
+let clubeId=null;
+let esquemaAtual=null;
 
-        if (!data) return;
+let jogadoresTime=[];
 
-        clubeSelecionado = true;
-        clubeId = data.id;
+let jogadoresSelecionados=[];
 
-        mostrarClube(
-            data.nome,
-            data.id === 1 ? "/img/cruzeiro.svg" : "/img/atletico-mineiro.svg"
-        );
 
-        containerTimes.style.display = "none";
-        textoEscolha.style.display = "none";
-        btnEsquema.style.display = "inline-block";
-    });
 
-    // =========================
-    window.selecionarClube = function (id) {
+btnEsquema.style.display="none";
 
-        fetch("/usuarios/clube", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ clubeId: id })
-        })
-        .then(res => res.json())
-        .then(data => {
-            mostrarMensagem(data.mensagem, "green");
-            setTimeout(() => location.reload(), 1200);
-        })
-        .catch(() => mostrarMensagem("Erro ao definir clube", "red"));
-    };
+modalEsquemaEl.style.display="none";
+modalJogadoresEl.style.display="none";
 
-    // =========================
-    window.salvarEsquema = function () {
 
-        if (!clubeSelecionado) {
-            mostrarMensagem("Escolha um clube primeiro!", "red");
-            return;
-        }
+/* FORMACOES ORIGINAIS */
+const posicoesEsquemas={
 
-        const selecionado = document.querySelector('input[name="esquema"]:checked');
+442:[
+{top:"90%",left:"50%"},
+{top:"70%",left:"15%"},
+{top:"70%",left:"85%"},
+{top:"80%",left:"35%"},
+{top:"80%",left:"65%"},
+{top:"45%",left:"20%"},
+{top:"45%",left:"40%"},
+{top:"45%",left:"60%"},
+{top:"45%",left:"80%"},
+{top:"20%",left:"40%"},
+{top:"20%",left:"60%"}
+],
 
-        if (!selecionado) {
-            mensagemModal.innerHTML = "Selecione um esquema!";
-            return;
-        }
+352:[
+{top:"90%",left:"50%"},
+{top:"75%",left:"30%"},
+{top:"75%",left:"50%"},
+{top:"75%",left:"70%"},
+{top:"50%",left:"15%"},
+{top:"55%",left:"35%"},
+{top:"55%",left:"50%"},
+{top:"55%",left:"65%"},
+{top:"50%",left:"85%"},
+{top:"25%",left:"40%"},
+{top:"25%",left:"60%"}
+],
 
-        esquemaAtual = selecionado.value;
-        esquemaSelecionado = true;
+541:[
+{top:"90%",left:"50%"},
+{top:"70%",left:"10%"},
+{top:"75%",left:"30%"},
+{top:"75%",left:"50%"},
+{top:"75%",left:"70%"},
+{top:"70%",left:"90%"},
+{top:"40%",left:"20%"},
+{top:"55%",left:"40%"},
+{top:"55%",left:"60%"},
+{top:"40%",left:"80%"},
+{top:"24%",left:"50%"}
+],
 
-        M.Modal.getInstance(modalEsquemaEl).close();
-        abrirModalJogadores();
-    };
+244:[
+{top:"90%",left:"50%"},
+{top:"80%",left:"30%"},
+{top:"80%",left:"70%"},
+{top:"50%",left:"20%"},
+{top:"60%",left:"35%"},
+{top:"60%",left:"65%"},
+{top:"50%",left:"80%"},
+{top:"20%",left:"35%"},
+{top:"35%",left:"35%"},
+{top:"35%",left:"65%"},
+{top:"20%",left:"65%"}
+]
 
-    // =========================
-    function abrirModalJogadores() {
+};
 
-        if (!clubeSelecionado || !esquemaSelecionado) {
-            mostrarMensagem("Complete as etapas primeiro!", "red");
-            return;
-        }
 
-        const posicoes = posicoesEsquemas[esquemaAtual];
-        const nomes = nomesPosicoes[esquemaAtual];
 
-        if (!posicoes || !nomes) {
-            mostrarMensagem("Esquema inválido!", "red");
-            return;
-        }
+const nomesPosicoes={
 
-        const modal = M.Modal.getInstance(modalJogadoresEl);
-        modal.open();
+442:[
+"GOL","LAT","LAT",
+"ZAG","ZAG",
+"MEI","MEI","MEI","MEI",
+"ATA","ATA"
+],
 
-        const campo = document.getElementById("campoFutebol");
-        campo.innerHTML = "";
-        jogadoresSelecionados = [];
+352:[
+"GOL",
+"ZAG","ZAG","ZAG",
+"LAT",
+"MEI","MEI","MEI",
+"LAT",
+"ATA","ATA"
+],
 
-        fetch(`/clube/${clubeId}/jogador`, {
-            headers: { Authorization: `Bearer ${token}` }
-        })
-        .then(res => res.json())
-        .then(data => {
+541:[
+"GOL",
+"LAT",
+"ZAG","ZAG","ZAG",
+"LAT",
+"MEI",
+"VOL","VOL",
+"MEI",
+"ATA"
+],
 
-            const usados = new Set();
+244:[
+"GOL",
+"ZAG","ZAG",
+"MEI",
+"VOL","VOL",
+"MEI",
+"ATA","ATA","ATA","ATA"
+]
 
-            posicoes.forEach((pos, i) => {
+};
 
-                const jogador = data.find(j =>
-                    j.posicao === nomes[i] && !usados.has(j.id)
-                ) || null;
 
-                if (jogador) usados.add(jogador.id);
 
-                const div = document.createElement("div");
-                div.classList.add("posicao");
+const mapaPosicao={
+GOL:["Goleiro"],
+LAT:["Lateral Direito","Lateral Esquerdo"],
+ZAG:["Zagueiro"],
+VOL:["Volante"],
+MEI:["Meio-campista"],
+ALA:["Lateral Direito","Lateral Esquerdo"],
+ATA:["Atacante"]
+};
 
-                div.style.top = pos.top;
-                div.style.left = pos.left;
 
-                div.innerHTML = `
-                    <div class="jogador-circle">${nomes[i]}</div>
-                    <div class="jogador-nome">${jogador ? jogador.nome : ""}</div>
-                `;
 
-                div.onclick = () => {
+fetch("/usuarios/clube",{
+headers:{
+Authorization:`Bearer ${token}`
+}
+})
+.then(r=>r.status===204?null:r.json())
+.then(data=>{
 
-                    if (!jogador) return;
+if(!data) return;
 
-                    if (div.classList.contains("ocupada")) {
-                        div.classList.remove("ocupada");
-                        jogadoresSelecionados =
-                            jogadoresSelecionados.filter(id => id !== jogador.id);
-                    } else {
-                        if (jogadoresSelecionados.length >= 11) {
-                            alert("Só 11 jogadores!");
-                            return;
-                        }
-                        div.classList.add("ocupada");
-                        jogadoresSelecionados.push(jogador.id);
-                    }
-                };
+clubeSelecionado=true;
+clubeId=data.id;
 
-                campo.appendChild(div);
-            });
-        });
-    }
+mostrarClube(
+data.nome,
+data.id===1
+?"/img/cruzeiro.svg"
+:"/img/atletico-mineiro.svg"
+);
 
-    // =========================
-    window.confirmarJogadores = function () {
+containerTimes.style.display="none";
+textoEscolha.style.display="none";
+btnEsquema.style.display="inline-block";
 
-        if (jogadoresSelecionados.length !== 11) {
-            document.getElementById("mensagemJogadores").innerText =
-                "Selecione exatamente 11 jogadores!";
-            return;
-        }
+});
 
-        fetch(`http://localhost:8080/clubes/${clubeId}/escalacoes?esquema=${esquemaAtual}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ jogadoresIds: jogadoresSelecionados })
-        })
-        .then(() => alert("Escalação salva com sucesso!"));
-    };
 
-    // =========================
-    function mostrarClube(nome, escudo) {
-        clubeSelecionadoDiv.innerHTML = `
-            <div class="center" style="margin-top:20px;">
-                <img src="${escudo}" width="80">
-                <h6>Seu time: <strong>${nome}</strong></h6>
-            </div>`;
-    }
 
-    function mostrarMensagem(texto, cor) {
-        mensagem.innerHTML = `<div class="card-panel ${cor} lighten-4">${texto}</div>`;
-        setTimeout(() => mensagem.innerHTML = "", 2000);
-    }
+window.selecionarClube=function(id){
+
+fetch("/usuarios/clube",{
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+
+body:JSON.stringify({
+clubeId:id
+})
+
+})
+.then(r=>r.json())
+.then(d=>{
+mostrarMensagem(d.mensagem,"green");
+setTimeout(()=>location.reload(),1200);
+});
+
+};
+
+
+
+window.salvarEsquema=function(){
+
+const selecionado=
+document.querySelector(
+'input[name="esquema"]:checked'
+);
+
+if(!selecionado){
+mensagemModal.innerHTML=
+"Selecione um esquema";
+return;
+}
+
+esquemaAtual=selecionado.value;
+esquemaSelecionado=true;
+
+M.Modal
+.getInstance(modalEsquemaEl)
+.close();
+
+abrirModalJogadores();
+
+};
+
+
+
+function abrirModalJogadores(){
+
+if(!clubeSelecionado || !esquemaSelecionado){
+return;
+}
+
+const campo=
+document.getElementById(
+"campoFutebol"
+);
+
+campo.innerHTML="";
+
+jogadoresSelecionados=[];
+
+M.Modal
+.getInstance(modalJogadoresEl)
+.open();
+
+
+fetch(`/clube/${clubeId}/jogador`,{
+headers:{
+Authorization:`Bearer ${token}`
+}
+})
+.then(r=>r.json())
+.then(data=>{
+
+jogadoresTime=data;
+
+posicoesEsquemas[
+esquemaAtual
+].forEach((pos,i)=>{
+
+const sigla=
+nomesPosicoes[
+esquemaAtual
+][i];
+
+const div=
+document.createElement("div");
+
+div.className="posicao";
+
+div.style.top=pos.top;
+div.style.left=pos.left;
+
+div.innerHTML=`
+<div class='jogador-circle'>
+${sigla}
+</div>
+
+<div
+class='jogador-nome'
+id='nome-${i}'>
+Selecionar
+</div>
+`;
+
+div.onclick=
+()=>abrirEscolhaJogador(
+i,
+sigla
+);
+
+campo.appendChild(div);
+
+});
+
+});
+
+}
+
+
+
+function abrirEscolhaJogador(slot,sigla){
+
+const lista=
+document.getElementById(
+"listaJogadores"
+);
+
+lista.innerHTML="";
+
+const tipos=
+mapaPosicao[sigla]||[];
+
+const usados=
+jogadoresSelecionados.map(
+j=>j.id
+);
+
+const candidatos=
+jogadoresTime.filter(j=>
+tipos.includes(j.posicao)
+&& !usados.includes(j.id)
+);
+
+
+candidatos.forEach(j=>{
+
+const item=
+document.createElement("div");
+
+item.className=
+"jogador-opcao";
+
+item.innerHTML=`
+<strong>${j.nome}</strong>
+<br>
+${j.posicao}
+`;
+
+item.onclick=function(){
+
+jogadoresSelecionados=
+jogadoresSelecionados.filter(
+x=>x.slot!==slot
+);
+
+jogadoresSelecionados.push({
+slot:slot,
+id:j.id
+});
+
+document.getElementById(
+`nome-${slot}`
+).innerText=j.nome;
+
+M.Modal
+.getInstance(
+modalEscolhaEl
+).close();
+
+};
+
+lista.appendChild(item);
+
+});
+
+
+M.Modal
+.getInstance(
+modalEscolhaEl
+).open();
+
+}
+
+
+
+window.confirmarJogadores=function(){
+
+if(
+jogadoresSelecionados.length!==11
+){
+
+document.getElementById(
+"mensagemJogadores"
+).innerText=
+"Selecione exatamente 11 jogadores";
+
+return;
+
+}
+
+fetch(
+`http://localhost:8080/clubes/${clubeId}/escalacoes?esquema=${esquemaAtual}`,
+{
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+
+body:JSON.stringify({
+
+jogadoresIds:
+jogadoresSelecionados
+.sort((a,b)=>
+a.slot-b.slot
+)
+.map(x=>x.id)
+
+})
+
+})
+.then(()=>alert(
+"Escalação salva com sucesso!"
+));
+
+};
+
+
+
+function mostrarClube(nome,escudo){
+
+clubeSelecionadoDiv.innerHTML=`
+<div class='center'
+style='margin-top:20px'>
+
+<img src='${escudo}'
+width='80'>
+
+<h6>
+Seu time:
+<strong>${nome}</strong>
+</h6>
+
+</div>
+`;
+
+}
+
+
+function mostrarMensagem(txt,cor){
+
+mensagem.innerHTML=
+`<div class='card-panel ${cor} lighten-4'>
+${txt}
+</div>`;
+
+setTimeout(
+()=>mensagem.innerHTML="",
+2000
+);
+
+}
+
 });
