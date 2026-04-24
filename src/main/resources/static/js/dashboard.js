@@ -1,49 +1,64 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",()=>{
 
-const mensagem = document.getElementById("mensagem");
-const mensagemModal = document.getElementById("mensagemModal");
-const containerTimes = document.getElementById("listaTimes");
-const clubeSelecionadoDiv = document.getElementById("clubeSelecionado");
-const textoEscolha = document.getElementById("textoEscolha");
-const btnEsquema = document.getElementById("btnEsquema");
+const mensagem=document.getElementById("mensagem");
+const mensagemModal=document.getElementById("mensagemModal");
+const containerTimes=document.getElementById("listaTimes");
+const clubeSelecionadoDiv=document.getElementById("clubeSelecionado");
+const textoEscolha=document.getElementById("textoEscolha");
+const btnEsquema=document.getElementById("btnEsquema");
 
-const modalEsquemaEl = document.getElementById("modalEsquema");
-const modalJogadoresEl = document.getElementById("modalJogadores");
-const modalSelecaoJogadorEl =
-document.getElementById("modalSelecaoJogador");
+const modalEsquemaEl=document.getElementById("modalEsquema");
+const modalJogadoresEl=document.getElementById("modalJogadores");
+const modalEscolhaEl=document.getElementById("modalEscolhaJogador");
 
-const token = localStorage.getItem("token");
+const token=localStorage.getItem("token");
 
-if (!token){
+if(!token){
 window.location.href="/";
 return;
 }
 
-/* PRESERVA MODAIS ORIGINAIS */
+
+/* evita modal quebrado */
 M.Modal.init(
-document.querySelectorAll(".modal"),
-{
-dismissible:false
-}
+document.querySelectorAll(
+"#modalEsquema,#modalJogadores"
+),
+{dismissible:false}
 );
 
+M.Modal.init(
+document.querySelectorAll(
+"#modalEscolhaJogador"
+),
+{dismissible:false}
+);
 
-/* ESTADO ORIGINAL + NOVO */
+modalEscolhaEl.style.display="none";
+
+
 let clubeSelecionado=false;
 let esquemaSelecionado=false;
 
 let clubeId=null;
 let esquemaAtual=null;
 
+let jogadoresTime=[];
+
 let jogadoresSelecionados=[];
 
-let jogadoresDisponiveis=[];
 
 
-/* ESQUEMAS ORIGINAIS */
+btnEsquema.style.display="none";
+
+modalEsquemaEl.style.display="none";
+modalJogadoresEl.style.display="none";
+
+
+/* FORMACOES ORIGINAIS */
 const posicoesEsquemas={
 
-"442":[
+442:[
 {top:"90%",left:"50%"},
 {top:"80%",left:"35%"},
 {top:"80%",left:"65%"},
@@ -57,7 +72,7 @@ const posicoesEsquemas={
 {top:"20%",left:"60%"}
 ],
 
-"352":[
+352:[
 {top:"90%",left:"50%"},
 {top:"75%",left:"30%"},
 {top:"75%",left:"50%"},
@@ -71,7 +86,7 @@ const posicoesEsquemas={
 {top:"25%",left:"60%"}
 ],
 
-"541":[
+541:[
 {top:"90%",left:"50%"},
 {top:"70%",left:"10%"},
 {top:"75%",left:"30%"},
@@ -85,7 +100,7 @@ const posicoesEsquemas={
 {top:"24%",left:"50%"}
 ],
 
-"244":[
+244:[
 {top:"90%",left:"50%"},
 {top:"80%",left:"30%"},
 {top:"80%",left:"70%"},
@@ -102,91 +117,79 @@ const posicoesEsquemas={
 };
 
 
+
 const nomesPosicoes={
 
-"442":[
-"Goleiro",
-"Lateral Direito",
-"Lateral Esquerdo",
-"Zagueiro",
-"Zagueiro",
-"Meio-campista",
-"Meio-campista",
-"Volante",
-"Volante",
-"Atacante",
-"Atacante"
+442:[
+"GOL","LAT","LAT",
+"ZAG","ZAG",
+"MEI","MEI","MEI","MEI",
+"ATA","ATA"
 ],
 
-"352":[
-"Goleiro",
-"Zagueiro",
-"Zagueiro",
-"Zagueiro",
-"Lateral Direito",
-"Meio-campista",
-"Volante",
-"Volante",
-"Lateral Esquerdo",
-"Atacante",
-"Atacante"
+352:[
+"GOL",
+"ZAG","ZAG","ZAG",
+"ALA",
+"MEI","MEI","MEI",
+"ALA",
+"ATA","ATA"
 ],
 
-"541":[
-"Goleiro",
-"Lateral Direito",
-"Zagueiro",
-"Zagueiro",
-"Zagueiro",
-"Lateral Esquerdo",
-"Meio-campista",
-"Volante",
-"Volante",
-"Meio-campista",
-"Atacante"
+541:[
+"GOL",
+"LAT",
+"ZAG","ZAG","ZAG",
+"LAT",
+"MEI",
+"VOL","VOL",
+"MEI",
+"ATA"
 ],
 
-"244":[
-"Goleiro",
-"Zagueiro",
-"Zagueiro",
-"Meio-campista",
-"Volante",
-"Volante",
-"Meio-campista",
-"Atacante",
-"Atacante",
-"Atacante",
-"Atacante"
+244:[
+"GOL",
+"ZAG","ZAG",
+"MEI",
+"VOL","VOL",
+"MEI",
+"ATA","ATA","ATA","ATA"
 ]
 
 };
 
 
-btnEsquema.style.display="none";
-modalEsquemaEl.style.display="none";
-modalJogadoresEl.style.display="none";
+
+const mapaPosicao={
+GOL:["Goleiro"],
+LAT:["Lateral Direito","Lateral Esquerdo"],
+ZAG:["Zagueiro"],
+VOL:["Volante"],
+MEI:["Meio-campista"],
+ALA:["Lateral Direito","Lateral Esquerdo"],
+ATA:["Atacante"]
+};
 
 
-/* CLUBE ORIGINAL */
+
 fetch("/usuarios/clube",{
 headers:{
 Authorization:`Bearer ${token}`
 }
 })
-.then(res=>res.status===204?null:res.json())
+.then(r=>r.status===204?null:r.json())
 .then(data=>{
 
-if(!data)return;
+if(!data) return;
 
 clubeSelecionado=true;
 clubeId=data.id;
 
 mostrarClube(
 data.nome,
-data.id===1?
-"/img/cruzeiro.svg":
-"/img/atletico-mineiro.svg"
+data.id===1
+?"/img/cruzeiro.svg"
+:"/img/atletico-mineiro.svg"
 );
 
 containerTimes.style.display="none";
@@ -196,10 +199,10 @@ btnEsquema.style.display="inline-block";
 });
 
 
+
 window.selecionarClube=function(id){
 
 fetch("/usuarios/clube",{
-
 method:"POST",
 
 headers:{
@@ -213,8 +216,9 @@ clubeId:id
 
 })
 .then(r=>r.json())
-.then(()=>{
-location.reload();
+.then(d=>{
+mostrarMensagem(d.mensagem,"green");
+setTimeout(()=>location.reload(),1200);
 });
 
 };
@@ -223,14 +227,6 @@ location.reload();
 
 window.salvarEsquema=function(){
 
-if(!clubeSelecionado){
-mostrarMensagem(
-"Escolha clube primeiro",
-"red"
-);
-return;
-}
-
 const selecionado=
 document.querySelector(
 'input[name="esquema"]:checked'
@@ -238,19 +234,15 @@ document.querySelector(
 
 if(!selecionado){
 mensagemModal.innerHTML=
-"Selecione esquema";
+"Selecione um esquema";
 return;
 }
 
-esquemaAtual=
-selecionado.value;
-
+esquemaAtual=selecionado.value;
 esquemaSelecionado=true;
 
 M.Modal
-.getInstance(
-modalEsquemaEl
-)
+.getInstance(modalEsquemaEl)
 .close();
 
 abrirModalJogadores();
@@ -261,11 +253,9 @@ abrirModalJogadores();
 
 function abrirModalJogadores(){
 
-const posicoes=
-posicoesEsquemas[esquemaAtual];
-
-const nomes=
-nomesPosicoes[esquemaAtual];
+if(!clubeSelecionado || !esquemaSelecionado){
+return;
+}
 
 const campo=
 document.getElementById(
@@ -277,64 +267,54 @@ campo.innerHTML="";
 jogadoresSelecionados=[];
 
 M.Modal
-.getInstance(
-modalJogadoresEl
-)
+.getInstance(modalJogadoresEl)
 .open();
 
 
 fetch(`/clube/${clubeId}/jogador`,{
-
 headers:{
-Authorization:
-`Bearer ${token}`
+Authorization:`Bearer ${token}`
 }
-
 })
 .then(r=>r.json())
 .then(data=>{
 
-jogadoresDisponiveis=data;
+jogadoresTime=data;
 
-posicoes.forEach(
-(pos,i)=>{
+posicoesEsquemas[
+esquemaAtual
+].forEach((pos,i)=>{
+
+const sigla=
+nomesPosicoes[
+esquemaAtual
+][i];
 
 const div=
-document.createElement(
-"div"
-);
+document.createElement("div");
 
-div.classList.add(
-"posicao"
-);
+div.className="posicao";
 
 div.style.top=pos.top;
 div.style.left=pos.left;
 
-div.dataset.posicao=
-nomes[i];
-
-div.dataset.jogadorId="";
-
 div.innerHTML=`
-
 <div class='jogador-circle'>
-${nomes[i].substring(0,3)}
+${sigla}
 </div>
 
-<div class='jogador-nome'>
+<div
+class='jogador-nome'
+id='nome-${i}'>
 Selecionar
 </div>
-
 `;
 
-div.onclick=()=>{
-
-abrirSelecaoJogador(
-div
+div.onclick=
+()=>abrirEscolhaJogador(
+i,
+sigla
 );
-
-};
 
 campo.appendChild(div);
 
@@ -346,13 +326,7 @@ campo.appendChild(div);
 
 
 
-/* AQUI ESTAVA O PROBLEMA */
-function abrirSelecaoJogador(
-posicaoDiv
-){
-
-const posicao=
-posicaoDiv.dataset.posicao;
+function abrirEscolhaJogador(slot,sigla){
 
 const lista=
 document.getElementById(
@@ -361,80 +335,55 @@ document.getElementById(
 
 lista.innerHTML="";
 
+const tipos=
+mapaPosicao[sigla]||[];
 
-const idsUsados=
+const usados=
 jogadoresSelecionados.map(
 j=>j.id
 );
 
-
 const candidatos=
-jogadoresDisponiveis.filter(
-j=>
-j.posicao===posicao &&
-!idsUsados.includes(
-j.id
-)
+jogadoresTime.filter(j=>
+tipos.includes(j.posicao)
+&& !usados.includes(j.id)
 );
 
-
-if(!candidatos.length){
-
-lista.innerHTML=
-"<p>Nenhum jogador disponível</p>";
-
-}else{
 
 candidatos.forEach(j=>{
 
 const item=
-document.createElement(
-"div"
-);
+document.createElement("div");
 
 item.className=
-"jogador-option";
+"jogador-opcao";
 
-item.innerHTML=
-`<strong>${j.nome}</strong>
+item.innerHTML=`
+<strong>${j.nome}</strong>
 <br>
-${j.posicao}`;
+${j.posicao}
+`;
 
-item.onclick=()=>{
-
-const antigo=
-posicaoDiv.dataset.jogadorId;
-
-if(antigo){
+item.onclick=function(){
 
 jogadoresSelecionados=
 jogadoresSelecionados.filter(
-x=>x.id!=antigo
+x=>x.slot!==slot
 );
 
-}
-
 jogadoresSelecionados.push({
+slot:slot,
 id:j.id
 });
 
-posicaoDiv.dataset.jogadorId=
-j.id;
-
-posicaoDiv.classList.add(
-"ocupada"
-);
-
-posicaoDiv.querySelector(
-".jogador-nome"
+document.getElementById(
+`nome-${slot}`
 ).innerText=j.nome;
-
 
 M.Modal
 .getInstance(
-modalSelecaoJogadorEl
-)
-.close();
+modalEscolhaEl
+).close();
 
 };
 
@@ -442,20 +391,17 @@ lista.appendChild(item);
 
 });
 
-}
 
 M.Modal
 .getInstance(
-modalSelecaoJogadorEl
-)
-.open();
+modalEscolhaEl
+).open();
 
 }
 
 
 
-window.confirmarJogadores=
-function(){
+window.confirmarJogadores=function(){
 
 if(
 jogadoresSelecionados.length!==11
@@ -464,7 +410,7 @@ jogadoresSelecionados.length!==11
 document.getElementById(
 "mensagemJogadores"
 ).innerText=
-"Selecione exatamente 11";
+"Selecione exatamente 11 jogadores";
 
 return;
 
@@ -473,46 +419,38 @@ return;
 fetch(
 `http://localhost:8080/clubes/${clubeId}/escalacoes?esquema=${esquemaAtual}`,
 {
-
 method:"POST",
 
 headers:{
-"Content-Type":
-"application/json",
-Authorization:
-`Bearer ${token}`
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
 },
 
 body:JSON.stringify({
 
 jogadoresIds:
-jogadoresSelecionados.map(
-j=>j.id
+jogadoresSelecionados
+.sort((a,b)=>
+a.slot-b.slot
 )
+.map(x=>x.id)
 
 })
 
-}
-
-)
-.then(()=>
-alert(
-"Escalação salva com sucesso"
-)
-);
+})
+.then(()=>alert(
+"Escalação salva com sucesso!"
+));
 
 };
 
 
 
-function mostrarClube(
-nome,
-escudo
-){
+function mostrarClube(nome,escudo){
 
 clubeSelecionadoDiv.innerHTML=`
 <div class='center'
-style='margin-top:20px;'>
+style='margin-top:20px'>
 
 <img src='${escudo}'
 width='80'>
@@ -528,14 +466,11 @@ Seu time:
 }
 
 
-function mostrarMensagem(
-texto,
-cor
-){
+function mostrarMensagem(txt,cor){
 
 mensagem.innerHTML=
 `<div class='card-panel ${cor} lighten-4'>
-${texto}
+${txt}
 </div>`;
 
 setTimeout(
