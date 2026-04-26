@@ -19,7 +19,8 @@ public class JogadorMapper {
         return new JogadorResponseDto(
                 jogador.getId(),
                 jogador.getNome(),
-                jogador.getPosicao()
+                jogador.getPosicao(),
+                jogador.getFoto()
         );
     }
 

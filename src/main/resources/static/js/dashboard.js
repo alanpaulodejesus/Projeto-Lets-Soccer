@@ -18,8 +18,6 @@ window.location.href="/";
 return;
 }
 
-
-/* evita modal quebrado */
 M.Modal.init(
 document.querySelectorAll(
 "#modalEsquema,#modalJogadores"
@@ -36,7 +34,6 @@ document.querySelectorAll(
 
 modalEscolhaEl.style.display="none";
 
-
 let clubeSelecionado=false;
 let esquemaSelecionado=false;
 
@@ -44,10 +41,7 @@ let clubeId=null;
 let esquemaAtual=null;
 
 let jogadoresTime=[];
-
 let jogadoresSelecionados=[];
-
-
 
 btnEsquema.style.display="none";
 
@@ -55,7 +49,6 @@ modalEsquemaEl.style.display="none";
 modalJogadoresEl.style.display="none";
 
 
-/* FORMACOES ORIGINAIS */
 const posicoesEsquemas={
 
 442:[
@@ -117,7 +110,6 @@ const posicoesEsquemas={
 };
 
 
-
 const nomesPosicoes={
 
 442:[
@@ -159,16 +151,33 @@ const nomesPosicoes={
 };
 
 
-
 const mapaPosicao={
 GOL:["Goleiro"],
-LAT:["Lateral Direito","Lateral Esquerdo"],
+LAT:["Lateral"],
 ZAG:["Zagueiro"],
 VOL:["Volante"],
-MEI:["Meio-campista"],
-ALA:["Lateral Direito","Lateral Esquerdo"],
+MEI:["Meia"],
 ATA:["Atacante"]
 };
+
+
+
+function montarFotoJogador(nome){
+
+let pasta=
+clubeId===1
+?"cruzeiro"
+:"atletico";
+
+let arquivo=nome
+.toLowerCase()
+.normalize("NFD")
+.replace(/[\u0300-\u036f]/g,"")
+.replace(/\s+/g,"-");
+
+return `/img/jogadores/${pasta}/${arquivo}.png`;
+
+}
 
 
 
@@ -194,6 +203,7 @@ data.id===1
 
 containerTimes.style.display="none";
 textoEscolha.style.display="none";
+
 btnEsquema.style.display="inline-block";
 
 });
@@ -203,6 +213,7 @@ btnEsquema.style.display="inline-block";
 window.selecionarClube=function(id){
 
 fetch("/usuarios/clube",{
+
 method:"POST",
 
 headers:{
@@ -217,8 +228,17 @@ clubeId:id
 })
 .then(r=>r.json())
 .then(d=>{
-mostrarMensagem(d.mensagem,"green");
-setTimeout(()=>location.reload(),1200);
+
+mostrarMensagem(
+d.mensagem,
+"green"
+);
+
+setTimeout(
+()=>location.reload(),
+1200
+);
+
 });
 
 };
@@ -238,7 +258,9 @@ mensagemModal.innerHTML=
 return;
 }
 
-esquemaAtual=selecionado.value;
+esquemaAtual=
+selecionado.value;
+
 esquemaSelecionado=true;
 
 M.Modal
@@ -267,14 +289,17 @@ campo.innerHTML="";
 jogadoresSelecionados=[];
 
 M.Modal
-.getInstance(modalJogadoresEl)
-.open();
+.getInstance(
+modalJogadoresEl
+).open();
 
 
 fetch(`/clube/${clubeId}/jogador`,{
+
 headers:{
 Authorization:`Bearer ${token}`
 }
+
 })
 .then(r=>r.json())
 .then(data=>{
@@ -299,15 +324,23 @@ div.style.top=pos.top;
 div.style.left=pos.left;
 
 div.innerHTML=`
-<div class='jogador-circle'>
+
+<div
+id='slot-${i}'
+class='jogador-circle'>
+
 ${sigla}
+
 </div>
 
 <div
 class='jogador-nome'
 id='nome-${i}'>
+
 Selecionar
+
 </div>
+
 `;
 
 div.onclick=
@@ -359,9 +392,19 @@ item.className=
 "jogador-opcao";
 
 item.innerHTML=`
-<strong>${j.nome}</strong>
+
+<div class='jogador-card-modal'>
+
+<strong>
+${j.nome}
+</strong>
+
 <br>
+
 ${j.posicao}
+
+</div>
+
 `;
 
 item.onclick=function(){
@@ -376,9 +419,29 @@ slot:slot,
 id:j.id
 });
 
+
 document.getElementById(
 `nome-${slot}`
 ).innerText=j.nome;
+
+
+document.getElementById(
+`slot-${slot}`
+).innerHTML=`
+
+<img
+class='jogador-foto'
+src='${montarFotoJogador(j.nome)}'
+onerror="this.src='/img/jogadores/default.png'">
+
+`;
+
+document.querySelectorAll(".posicao")[
+slot
+].classList.add(
+"ocupada"
+);
+
 
 M.Modal
 .getInstance(
