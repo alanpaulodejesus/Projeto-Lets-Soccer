@@ -27,7 +27,6 @@ VALUES
 -- Volantes
 ('Lucas Romero','Volante',1,'lucas-romero.png'),
 ('Lucas Silva','Volante',1,'lucas-silva.png'),
-('Walace','Volante',1,'walace.png'),
 ('Matheus Henrique','Volante',1,'matheus-henrique.png'),
 ('Christian','Volante',1,'christian.png'),
 
@@ -41,7 +40,6 @@ VALUES
 
 -- Atacantes
 ('Kaio Jorge','Atacante',1,'kaio-jorge.png'),
-('Juan Dinenno','Atacante',1,'juan-dinenno.png'),
 ('Wanderson','Atacante',1,'wanderson.png'),
 ('Marquinhos','Atacante',1,'marquinhos.png'),
 ('Chico da Costa','Atacante',1,'chico-da-costa.png'),
