@@ -88,8 +88,6 @@ VALUES
 
 -- Atacantes
 ('Hulk','Atacante',2,'hulk.png'),
-('Rony','Atacante',2,'rony.png'),
-('Júnior Santos','Atacante',2,'junior-santos.png'),
 ('Cuello','Atacante',2,'cuello.png'),
 ('Dudu','Atacante',2,'dudu.png'),
 ('Biel','Atacante',2,'biel.png'),
