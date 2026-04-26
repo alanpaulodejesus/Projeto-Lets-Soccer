@@ -20,6 +20,7 @@ public class JogadorEntity {
     @NotNull
     private String posicao;
 
+    private String foto;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clube_id", nullable = false)
     private ClubeEntity clube;
@@ -53,6 +54,13 @@ public class JogadorEntity {
 
     public void setClube(ClubeEntity clube) {
         this.clube = clube;
+    }
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 
 }
