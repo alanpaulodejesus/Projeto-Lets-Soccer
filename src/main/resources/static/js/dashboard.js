@@ -261,13 +261,68 @@ return;
 esquemaAtual=
 selecionado.value;
 
+
+const payload={
+
+esquema442:
+esquemaAtual==="442",
+
+esquema352:
+esquemaAtual==="352",
+
+esquema541:
+esquemaAtual==="541",
+
+esquema244:
+esquemaAtual==="244"
+
+};
+
+
+fetch(
+`http://localhost:8080/clube/${clubeId}/esquema-tatico`,
+{
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+
+body:JSON.stringify(
+payload
+)
+
+})
+.then(r=>{
+
+if(!r.ok){
+throw new Error(
+"Erro ao salvar esquema"
+);
+}
+
+return r.json();
+
+})
+.then(()=>{
+
 esquemaSelecionado=true;
 
 M.Modal
-.getInstance(modalEsquemaEl)
-.close();
+.getInstance(
+modalEsquemaEl
+).close();
 
 abrirModalJogadores();
+
+})
+.catch(e=>{
+
+mensagemModal.innerHTML=
+e.message;
+
+});
 
 };
 
