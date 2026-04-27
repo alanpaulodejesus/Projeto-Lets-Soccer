@@ -395,6 +395,13 @@ item.innerHTML=`
 
 <div class='jogador-card-modal'>
 
+<img
+class='jogador-foto'
+src='${montarFotoJogador(j.nome)}'
+onerror="this.src='/img/jogadores/default.png'">
+
+<div>
+
 <strong>
 ${j.nome}
 </strong>
@@ -402,6 +409,8 @@ ${j.nome}
 <br>
 
 ${j.posicao}
+
+</div>
 
 </div>
 
