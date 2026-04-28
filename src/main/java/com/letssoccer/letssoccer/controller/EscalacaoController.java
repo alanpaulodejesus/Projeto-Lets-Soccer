@@ -28,7 +28,7 @@ public class EscalacaoController {
 
         return ResponseEntity.ok(
                 new EscalacaoResponseDto(
-                        "Escalação salva com sucesso",
+                        "Escalação salva com sucesso!",
                         esquema,
                         dto.getJogadoresIds()
                 )
