@@ -2,14 +2,9 @@ package com.letssoccer.letssoccer.controller;
 
 import com.letssoccer.letssoccer.dto.EsquemaTaticoRequestDto;
 import com.letssoccer.letssoccer.dto.EsquemaTaticoResponseDto;
-import com.letssoccer.letssoccer.entities.UsuarioEntity;
-import com.letssoccer.letssoccer.messages.exception.KeyMessages;
-import com.letssoccer.letssoccer.messages.sucess.MessageResponseDto;
-import com.letssoccer.letssoccer.messages.sucess.SuccessMessages;
 import com.letssoccer.letssoccer.service.EsquemaTaticoService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

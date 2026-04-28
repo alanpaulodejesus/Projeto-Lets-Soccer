@@ -544,7 +544,7 @@ return;
 }
 
 fetch(
-`http://localhost:8080/clubes/${clubeId}/escalacoes?esquema=${esquemaAtual}`,
+`http://localhost:8080/clube/${clubeId}/escalacoes?esquema=${esquemaAtual}`,
 {
 method:"POST",
 
@@ -565,9 +565,25 @@ a.slot-b.slot
 })
 
 })
-.then(()=>alert(
-"Escalação salva com sucesso!"
-));
+.then(r => {
+  if (!r.ok) {
+    return r.json().then(err => { throw new Error(err.message || "Erro"); });
+  }
+  return r.json();
+})
+.then(data => {
+
+  M.Modal.getInstance(modalJogadoresEl).close();
+
+  M.toast({
+    html: data.mensagem || "Escalação salva com sucesso!",
+    classes: "green darken-2"
+  });
+
+})
+.catch(e => {
+  document.getElementById("mensagemJogadores").innerText = e.message;
+});
 
 };
 
