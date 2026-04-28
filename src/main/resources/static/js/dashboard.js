@@ -544,7 +544,7 @@ return;
 }
 
 fetch(
-`http://localhost:8080/clubes/${clubeId}/escalacoes?esquema=${esquemaAtual}`,
+`http://localhost:8080/clube/${clubeId}/escalacoes?esquema=${esquemaAtual}`,
 {
 method:"POST",
 
