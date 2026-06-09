@@ -1,0 +1,29 @@
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: letssoccer-postgres
+    environment:
+      POSTGRES_DB: letssoccer
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: letssoccer-app
+    depends_on:
+      - postgres
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      DB_URL: jdbc:postgresql://postgres:5432/letssoccer
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    ports:
+      - "8081:8080"
+
+volumes:
+  postgres-data:
