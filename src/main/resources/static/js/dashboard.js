@@ -580,12 +580,86 @@ a.slot-b.slot
     classes: "green darken-2"
   });
 
+  exibirEscalacaoSalva(data);
+
 })
 .catch(e => {
   document.getElementById("mensagemJogadores").innerText = e.message;
 });
 
 };
+
+
+
+function exibirEscalacaoSalva(data){
+
+const container=
+document.getElementById(
+"escalacaoSalva"
+);
+
+const esquema=
+String(esquemaAtual||data.esquema);
+
+const rotulo=
+esquema.split("").join("-");
+
+container.innerHTML=`
+
+<h5 class='center'>
+Escalação salva
+</h5>
+
+<p class='center'>
+Esquema:
+<strong>${rotulo}</strong>
+</p>
+
+<div id='campoSalvo' class='campo-salvo'></div>
+
+`;
+
+const campo=
+document.getElementById(
+"campoSalvo"
+);
+
+const posicoes=
+posicoesEsquemas[esquema]||[];
+
+(data.jogadores||[]).forEach((j,i)=>{
+
+const pos=posicoes[i];
+
+if(!pos) return;
+
+const div=
+document.createElement("div");
+
+div.className="posicao ocupada";
+
+div.style.top=pos.top;
+div.style.left=pos.left;
+
+div.innerHTML=`
+
+<img
+class='jogador-foto'
+src='${montarFotoJogador(j.nome)}'
+alt='${j.nome}'
+onerror="this.src='/img/jogadores/default.png'">
+
+<div class='jogador-nome'>
+${j.nome}
+</div>
+
+`;
+
+campo.appendChild(div);
+
+});
+
+}
 
 
 

@@ -26,7 +26,8 @@ left:20px;
 top:20px;
 }
 
-#campoFutebol{
+#campoFutebol,
+.campo-salvo{
 position:relative;
 width:100%;
 max-width:500px;
@@ -37,7 +38,8 @@ border-radius:15px;
 overflow:hidden;
 }
 
-#campoFutebol:before{
+#campoFutebol:before,
+.campo-salvo:before{
 content:"";
 position:absolute;
 width:100%;
@@ -146,6 +148,15 @@ cursor:pointer;
 background:#f2f2f2;
 }
 
+/* ESCALACAO SALVA */
+#escalacaoSalva{
+margin-top:30px;
+}
+
+.campo-salvo{
+margin-bottom:30px;
+}
+
 </style>
 </head>
 
@@ -233,6 +244,8 @@ background:#f2f2f2;
     </div>
 
     <div id="mensagem"></div>
+
+    <div id="escalacaoSalva"></div>
 
 </div>
 
@@ -373,6 +386,7 @@ function logout(){
 localStorage.removeItem("token");
 window.location.href="/";
 }
+
 </script>
 
 </body>
