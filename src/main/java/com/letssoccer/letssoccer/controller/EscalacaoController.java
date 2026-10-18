@@ -2,10 +2,13 @@ package com.letssoccer.letssoccer.controller;
 
 import com.letssoccer.letssoccer.dto.EscalacaoRequestDto;
 import com.letssoccer.letssoccer.dto.EscalacaoResponseDto;
+import com.letssoccer.letssoccer.dto.JogadorResponseDto;
 import com.letssoccer.letssoccer.service.EscalacaoService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/clube")
@@ -24,13 +27,13 @@ public class EscalacaoController {
             @RequestBody @Valid EscalacaoRequestDto dto
     ) {
 
-        escalacaoService.salvarEscalacao(id, esquema, dto);
+        List<JogadorResponseDto> jogadores = escalacaoService.salvarEscalacao(id, esquema, dto);
 
         return ResponseEntity.ok(
                 new EscalacaoResponseDto(
                         "Escalação salva com sucesso!",
                         esquema,
-                        dto.getJogadoresIds()
+                        jogadores
                 )
         );
     }
