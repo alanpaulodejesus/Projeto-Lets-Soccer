@@ -598,28 +598,11 @@ document.getElementById(
 "escalacaoSalva"
 );
 
-const itens=(data.jogadores||[]).map(j=>`
+const esquema=
+String(esquemaAtual||data.esquema);
 
-<div class='escalacao-item'>
-
-<img
-src='${montarFotoJogador(j.nome)}'
-alt='${j.nome}'
-onerror="this.src='/img/jogadores/default.png'">
-
-<div>
-
-<strong>${j.nome}</strong>
-
-<div class='escalacao-posicao'>
-${j.posicao}
-</div>
-
-</div>
-
-</div>
-
-`).join("");
+const rotulo=
+esquema.split("").join("-");
 
 container.innerHTML=`
 
@@ -629,12 +612,52 @@ Escalação salva
 
 <p class='center'>
 Esquema:
-<strong>${data.esquema}</strong>
+<strong>${rotulo}</strong>
 </p>
 
-${itens}
+<div id='campoSalvo' class='campo-salvo'></div>
 
 `;
+
+const campo=
+document.getElementById(
+"campoSalvo"
+);
+
+const posicoes=
+posicoesEsquemas[esquema]||[];
+
+(data.jogadores||[]).forEach((j,i)=>{
+
+const pos=posicoes[i];
+
+if(!pos) return;
+
+const div=
+document.createElement("div");
+
+div.className="posicao ocupada";
+
+div.style.top=pos.top;
+div.style.left=pos.left;
+
+div.innerHTML=`
+
+<img
+class='jogador-foto'
+src='${montarFotoJogador(j.nome)}'
+alt='${j.nome}'
+onerror="this.src='/img/jogadores/default.png'">
+
+<div class='jogador-nome'>
+${j.nome}
+</div>
+
+`;
+
+campo.appendChild(div);
+
+});
 
 }
 

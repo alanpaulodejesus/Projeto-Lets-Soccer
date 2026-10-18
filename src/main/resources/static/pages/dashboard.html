@@ -26,7 +26,8 @@ left:20px;
 top:20px;
 }
 
-#campoFutebol{
+#campoFutebol,
+.campo-salvo{
 position:relative;
 width:100%;
 max-width:500px;
@@ -37,7 +38,8 @@ border-radius:15px;
 overflow:hidden;
 }
 
-#campoFutebol:before{
+#campoFutebol:before,
+.campo-salvo:before{
 content:"";
 position:absolute;
 width:100%;
@@ -151,26 +153,8 @@ background:#f2f2f2;
 margin-top:30px;
 }
 
-.escalacao-item{
-display:flex;
-align-items:center;
-gap:15px;
-padding:8px 10px;
-border-bottom:1px solid #ddd;
-background:white;
-}
-
-.escalacao-item img{
-width:50px;
-height:50px;
-border-radius:50%;
-object-fit:cover;
-border:2px solid #1e88e5;
-}
-
-.escalacao-posicao{
-font-size:12px;
-color:#757575;
+.campo-salvo{
+margin-bottom:30px;
 }
 
 </style>
@@ -403,26 +387,6 @@ localStorage.removeItem("token");
 window.location.href="/";
 }
 
-function exibirEscalacaoSalva(data){
-
-    const container = document.getElementById("escalacaoSalva");
-
-    const itens = data.jogadores.map(j => `
-        <div class="escalacao-item">
-            <img src="${j.foto}" alt="${j.nome}">
-            <div>
-                <strong>${j.nome}</strong>
-                <div class="escalacao-posicao">${j.posicao}</div>
-            </div>
-        </div>
-    `).join("");
-
-    container.innerHTML = `
-        <h5 class="center">${data.mensagem}</h5>
-        <p class="center">Esquema: <strong>${data.esquema}</strong></p>
-        ${itens}
-    `;
-}
 </script>
 
 </body>
