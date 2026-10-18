@@ -580,12 +580,63 @@ a.slot-b.slot
     classes: "green darken-2"
   });
 
+  exibirEscalacaoSalva(data);
+
 })
 .catch(e => {
   document.getElementById("mensagemJogadores").innerText = e.message;
 });
 
 };
+
+
+
+function exibirEscalacaoSalva(data){
+
+const container=
+document.getElementById(
+"escalacaoSalva"
+);
+
+const itens=(data.jogadores||[]).map(j=>`
+
+<div class='escalacao-item'>
+
+<img
+src='${montarFotoJogador(j.nome)}'
+alt='${j.nome}'
+onerror="this.src='/img/jogadores/default.png'">
+
+<div>
+
+<strong>${j.nome}</strong>
+
+<div class='escalacao-posicao'>
+${j.posicao}
+</div>
+
+</div>
+
+</div>
+
+`).join("");
+
+container.innerHTML=`
+
+<h5 class='center'>
+Escalação salva
+</h5>
+
+<p class='center'>
+Esquema:
+<strong>${data.esquema}</strong>
+</p>
+
+${itens}
+
+`;
+
+}
 
 
 
