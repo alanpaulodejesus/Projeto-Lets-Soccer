@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface EscalacaoRepository extends JpaRepository<EscalacaoEntity, Integer> {
 
     Optional<EscalacaoEntity> findTopByClubeIdAndUsuarioEmailOrderByDataCriacaoDesc(Integer clubeId, String email);
+    boolean existsByClubeIdAndUsuarioEmail(Integer clubeId, String email);
 }

@@ -53,6 +53,10 @@ public class EscalacaoService {
 
         List<Integer> jogadoresIds = dto.getJogadoresIds();
 
+        if (escalacaoRepository.existsByClubeIdAndUsuarioEmail(clubeId, email)) {
+            throw new BadRequestException("Você já possui uma escalação salva para o clube");
+        }
+
         if (jogadoresIds == null || jogadoresIds.size() != 11) {
             throw new BadRequestException("A escalação deve conter exatamente 11 jogadores");
         }
