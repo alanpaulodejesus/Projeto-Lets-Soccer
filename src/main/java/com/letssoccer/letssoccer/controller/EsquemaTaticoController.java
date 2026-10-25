@@ -5,6 +5,8 @@ import com.letssoccer.letssoccer.dto.EsquemaTaticoResponseDto;
 import com.letssoccer.letssoccer.service.EsquemaTaticoService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,10 +22,11 @@ public class EsquemaTaticoController {
     @PostMapping("/{id}/esquema-tatico")
     public ResponseEntity<EsquemaTaticoResponseDto> definirEsquema(
             @PathVariable Integer id,
-            @RequestBody @Valid EsquemaTaticoRequestDto dto) {
+            @RequestBody @Valid EsquemaTaticoRequestDto dto,
+            @AuthenticationPrincipal UserDetails userDetails) {
 
-        String esquema =
-                esquemaService.definirEsquema(id, dto);
+        String esquema = esquemaService.definirEsquema(id, userDetails.getUsername(), dto);
+
         return ResponseEntity.ok(
                 new EsquemaTaticoResponseDto(
                         "Esquema tático definido com sucesso",
@@ -31,5 +34,4 @@ public class EsquemaTaticoController {
                 )
         );
     }
-
 }
