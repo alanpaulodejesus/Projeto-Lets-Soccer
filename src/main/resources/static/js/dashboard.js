@@ -238,18 +238,10 @@ data.id===1
 containerTimes.style.display="none";
 textoEscolha.style.display="none";
 
-if(data.possuiEscalacao){
-
-// já escalou: mostra o time salvo (GET) e não permite nova escalação
-btnEsquema.style.display="none";
+// GET /clube/{id}/escalacao:
+// 200 => mostra o time salvo e esconde o botão
+// 204 => ainda não escalou, mostra o botão
 carregarEscalacaoSalva();
-
-}else{
-
-// ainda não escalou: só o botão, sem chamar o GET da escalação
-btnEsquema.style.display="inline-block";
-
-}
 
 });
 
@@ -302,12 +294,12 @@ setTimeout(
 
 
 
-/* ---------- BUSCAR ESCALACAO SALVA (GET) ---------- */
+/* ---------- BUSCAR ESCALACAO SALVA (GET /clube/{id}/escalacao) ---------- */
 
 // chamada em 3 situações:
-// 1) ao abrir a página, se o usuário já escalou (possuiEscalacao=true)
+// 1) ao abrir a página (200 = já escalou, 204 = ainda não)
 // 2) logo depois de salvar a escalação (POST 200)
-// 3) quando o POST avisa que a escalação já existe (409)
+// 3) quando o POST avisa que a escalação já existe
 // fallbackData: resposta do POST, usada só se o GET falhar
 function carregarEscalacaoSalva(fallbackData){
 
@@ -323,6 +315,8 @@ sessaoExpirada();
 throw new Error("Sessão expirada");
 }
 
+if(r.status===204) return null;     // ainda não escalou
+
 if(!r.ok) return lerErro(r);
 
 return r.json();
@@ -330,8 +324,25 @@ return r.json();
 })
 .then(data=>{
 
+if(data){
+
+// já escalou: mostra o time salvo e não permite nova escalação
 btnEsquema.style.display="none";
 exibirEscalacaoSalva(data);
+return;
+
+}
+
+if(fallbackData){
+
+btnEsquema.style.display="none";
+exibirEscalacaoSalva(fallbackData);
+return;
+
+}
+
+// não existe escalação: libera o botão
+btnEsquema.style.display="inline-block";
 
 })
 .catch(e=>{
@@ -346,6 +357,9 @@ return;
 }
 
 mostrarMensagem(e.message,"red");
+
+// não bloqueia o fluxo; o backend barra duplicidade
+btnEsquema.style.display="inline-block";
 
 });
 

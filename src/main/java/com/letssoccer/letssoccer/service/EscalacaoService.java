@@ -17,10 +17,7 @@ import com.letssoccer.letssoccer.repositories.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,17 +93,15 @@ public class EscalacaoService {
     }
 
     @Transactional(readOnly = true)
-    public EscalacaoResponseDto buscarEscalacao(Integer clubeId, String email) {
+    public Optional<EscalacaoResponseDto> buscarEscalacao(Integer clubeId, String email) {
 
-        EscalacaoEntity escalacao = escalacaoRepository
+        return escalacaoRepository
                 .findTopByClubeIdAndUsuarioEmailOrderByDataCriacaoDesc(clubeId, email)
-                .orElseThrow(() -> new NotFoundException("Escalação não encontrada"));
-
-        return new EscalacaoResponseDto(
-                "Escalação encontrada",
-                escalacao.getEsquema(),
-                toJogadoresDto(escalacao)
-        );
+                .map(e -> new EscalacaoResponseDto(
+                        "Escalação encontrada",
+                        e.getEsquema(),
+                        toJogadoresDto(e)
+                ));
     }
 
     private List<JogadorResponseDto> toJogadoresDto(EscalacaoEntity escalacao) {

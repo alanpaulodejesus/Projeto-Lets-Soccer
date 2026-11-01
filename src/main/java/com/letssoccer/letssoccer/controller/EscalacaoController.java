@@ -42,8 +42,8 @@ public class EscalacaoController {
             @PathVariable Integer id,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        return ResponseEntity.ok(
-                escalacaoService.buscarEscalacao(id, userDetails.getUsername())
-        );
+        return escalacaoService.buscarEscalacao(id, userDetails.getUsername())
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.noContent().build());
     }
 }
