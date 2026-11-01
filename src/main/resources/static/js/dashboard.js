@@ -162,6 +162,29 @@ ATA:["Atacante"]
 
 
 
+/* ---------- AUXILIARES ---------- */
+
+function sessaoExpirada(){
+localStorage.removeItem("token");
+window.location.href="/";
+}
+
+// transforma a resposta de erro do backend em Error com .status e .message
+function lerErro(res){
+return res.json().catch(()=>({})).then(err=>{
+const e=new Error(
+err.message||err.mensagem||err.erro||"Erro inesperado"
+);
+e.status=res.status;
+throw e;
+});
+}
+
+// "5-4-1" ou "541" -> "541"
+function normalizarEsquema(v){
+return String(v||"").replace(/\D/g,"");
+}
+
 function montarFotoJogador(nome){
 
 let pasta=
@@ -181,12 +204,23 @@ return `/img/jogadores/${pasta}/${arquivo}.png`;
 
 
 
+/* ---------- CLUBE DO USUARIO ---------- */
+
 fetch("/usuarios/clube",{
 headers:{
 Authorization:`Bearer ${token}`
 }
 })
-.then(r=>r.status===204?null:r.json())
+.then(r=>{
+
+if(r.status===401){
+sessaoExpirada();
+return null;
+}
+
+return r.status===204?null:r.json();
+
+})
 .then(data=>{
 
 if(!data) return;
@@ -204,7 +238,18 @@ data.id===1
 containerTimes.style.display="none";
 textoEscolha.style.display="none";
 
+if(data.possuiEscalacao){
+
+// já escalou: mostra o time salvo (GET) e não permite nova escalação
+btnEsquema.style.display="none";
+carregarEscalacaoSalva();
+
+}else{
+
+// ainda não escalou: só o botão, sem chamar o GET da escalação
 btnEsquema.style.display="inline-block";
+
+}
 
 });
 
@@ -226,7 +271,18 @@ clubeId:id
 })
 
 })
-.then(r=>r.json())
+.then(r=>{
+
+if(r.status===401){
+sessaoExpirada();
+throw new Error("Sessão expirada");
+}
+
+if(!r.ok) return lerErro(r);
+
+return r.json();
+
+})
 .then(d=>{
 
 mostrarMensagem(
@@ -239,11 +295,65 @@ setTimeout(
 1200
 );
 
-});
+})
+.catch(e=>mostrarMensagem(e.message,"red"));
 
 };
 
 
+
+/* ---------- BUSCAR ESCALACAO SALVA (GET) ---------- */
+
+// chamada em 3 situações:
+// 1) ao abrir a página, se o usuário já escalou (possuiEscalacao=true)
+// 2) logo depois de salvar a escalação (POST 200)
+// 3) quando o POST avisa que a escalação já existe (409)
+// fallbackData: resposta do POST, usada só se o GET falhar
+function carregarEscalacaoSalva(fallbackData){
+
+return fetch(`/clube/${clubeId}/escalacao`,{
+headers:{
+Authorization:`Bearer ${token}`
+}
+})
+.then(r=>{
+
+if(r.status===401){
+sessaoExpirada();
+throw new Error("Sessão expirada");
+}
+
+if(!r.ok) return lerErro(r);
+
+return r.json();
+
+})
+.then(data=>{
+
+btnEsquema.style.display="none";
+exibirEscalacaoSalva(data);
+
+})
+.catch(e=>{
+
+if(fallbackData){
+
+// o POST já tinha dado certo: mostra o que ele devolveu
+btnEsquema.style.display="none";
+exibirEscalacaoSalva(fallbackData);
+return;
+
+}
+
+mostrarMensagem(e.message,"red");
+
+});
+
+}
+
+
+
+/* ---------- ESQUEMA ---------- */
 
 window.salvarEsquema=function(){
 
@@ -280,7 +390,7 @@ esquemaAtual==="244"
 
 
 fetch(
-`http://localhost:8080/clube/${clubeId}/esquema-tatico`,
+`/clube/${clubeId}/esquema-tatico`,
 {
 method:"POST",
 
@@ -296,11 +406,12 @@ payload
 })
 .then(r=>{
 
-if(!r.ok){
-throw new Error(
-"Erro ao salvar esquema"
-);
+if(r.status===401){
+sessaoExpirada();
+throw new Error("Sessão expirada");
 }
+
+if(!r.ok) return lerErro(r);
 
 return r.json();
 
@@ -328,6 +439,8 @@ e.message;
 
 
 
+/* ---------- MONTAR ESCALACAO ---------- */
+
 function abrirModalJogadores(){
 
 if(!clubeSelecionado || !esquemaSelecionado){
@@ -340,6 +453,10 @@ document.getElementById(
 );
 
 campo.innerHTML="";
+
+document.getElementById(
+"mensagemJogadores"
+).innerText="";
 
 jogadoresSelecionados=[];
 
@@ -356,7 +473,18 @@ Authorization:`Bearer ${token}`
 }
 
 })
-.then(r=>r.json())
+.then(r=>{
+
+if(r.status===401){
+sessaoExpirada();
+throw new Error("Sessão expirada");
+}
+
+if(!r.ok) return lerErro(r);
+
+return r.json();
+
+})
 .then(data=>{
 
 jogadoresTime=data;
@@ -408,6 +536,13 @@ campo.appendChild(div);
 
 });
 
+})
+.catch(e=>{
+
+document.getElementById(
+"mensagemJogadores"
+).innerText=e.message;
+
 });
 
 }
@@ -426,10 +561,11 @@ lista.innerHTML="";
 const tipos=
 mapaPosicao[sigla]||[];
 
+// ignora o jogador do próprio slot, para poder trocá-lo
 const usados=
-jogadoresSelecionados.map(
-j=>j.id
-);
+jogadoresSelecionados
+.filter(j=>j.slot!==slot)
+.map(j=>j.id);
 
 const candidatos=
 jogadoresTime.filter(j=>
@@ -500,9 +636,9 @@ onerror="this.src='/img/jogadores/default.png'">
 
 `;
 
-document.querySelectorAll(".posicao")[
-slot
-].classList.add(
+document.querySelectorAll(
+"#campoFutebol .posicao"
+)[slot].classList.add(
 "ocupada"
 );
 
@@ -544,7 +680,7 @@ return;
 }
 
 fetch(
-`http://localhost:8080/clube/${clubeId}/escalacoes?esquema=${esquemaAtual}`,
+`/clube/${clubeId}/escalacoes?esquema=${esquemaAtual}`,
 {
 method:"POST",
 
@@ -557,6 +693,7 @@ body:JSON.stringify({
 
 jogadoresIds:
 jogadoresSelecionados
+.slice()
 .sort((a,b)=>
 a.slot-b.slot
 )
@@ -565,31 +702,60 @@ a.slot-b.slot
 })
 
 })
-.then(r => {
-  if (!r.ok) {
-    return r.json().then(err => { throw new Error(err.message || "Erro"); });
-  }
-  return r.json();
-})
-.then(data => {
+.then(r=>{
 
-  M.Modal.getInstance(modalJogadoresEl).close();
+if(r.status===401){
+sessaoExpirada();
+throw new Error("Sessão expirada");
+}
 
-  M.toast({
-    html: data.mensagem || "Escalação salva com sucesso!",
-    classes: "green darken-2"
-  });
+if(!r.ok) return lerErro(r);
 
-  exibirEscalacaoSalva(data);
+return r.json();
 
 })
-.catch(e => {
-  document.getElementById("mensagemJogadores").innerText = e.message;
+.then(data=>{
+
+M.Modal.getInstance(modalJogadoresEl).close();
+
+M.toast({
+html:data.mensagem||"Escalação salva com sucesso!",
+classes:"green darken-2"
+});
+
+// escalação salva: busca no GET e exibe
+carregarEscalacaoSalva(data);
+
+})
+.catch(e=>{
+
+// escalação já existe (409, ou 400 com a mensagem do backend)
+if(e.status===409 || /já possui/i.test(e.message)){
+
+M.Modal.getInstance(modalJogadoresEl).close();
+
+M.toast({
+html:e.message,
+classes:"orange darken-2"
+});
+
+carregarEscalacaoSalva();   // mostra a que já está salva
+return;
+
+}
+
+// demais erros de validação ficam dentro do modal
+document.getElementById(
+"mensagemJogadores"
+).innerText=e.message;
+
 });
 
 };
 
 
+
+/* ---------- EXIBIR ESCALACAO ---------- */
 
 function exibirEscalacaoSalva(data){
 
@@ -599,7 +765,9 @@ document.getElementById(
 );
 
 const esquema=
-String(esquemaAtual||data.esquema);
+normalizarEsquema(
+data.esquema||esquemaAtual
+);
 
 const rotulo=
 esquema.split("").join("-");

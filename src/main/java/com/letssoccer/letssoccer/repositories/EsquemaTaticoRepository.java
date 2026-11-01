@@ -5,10 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
+public interface EsquemaTaticoRepository extends JpaRepository<EsquemaTaticoEntity, Integer> {
 
-public interface EsquemaTaticoRepository
-        extends JpaRepository<EsquemaTaticoEntity, Integer> {
-
-    boolean existsByClubeId(Integer clubeId);
-    Optional<EsquemaTaticoEntity> findByClubeId(Integer clubeId);
+    Optional<EsquemaTaticoEntity> findByClubeIdAndUsuarioEmail(Integer clubeId, String email);
 }

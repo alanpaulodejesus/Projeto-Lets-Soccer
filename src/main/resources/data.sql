@@ -1,136 +1,96 @@
+-- Clubes com IDs fixos
+INSERT INTO clube (id, nome, informacao) VALUES
+    (1, 'Cruzeiro', 'Minas Gerais'),
+    (2, 'Atlético Mineiro', 'Minas Gerais')
+ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO clube (nome, informacao)
-SELECT 'Cruzeiro', 'Minas Gerais'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM clube
-    WHERE nome = 'Cruzeiro'
-);
+-- Jogadores do Cruzeiro (IDs 1 a 31)
+INSERT INTO jogador (id, nome, posicao, clube_id, foto) VALUES
+    -- Goleiros
+    (1,  'Cássio', 'Goleiro', 1, 'cassio.png'),
+    (2,  'Matheus Cunha', 'Goleiro', 1, 'matheus-cunha.png'),
+    (3,  'Otávio', 'Goleiro', 1, 'otavio.png'),
 
+    -- Laterais
+    (4,  'William', 'Lateral', 1, 'william.png'),
+    (5,  'Fagner', 'Lateral', 1, 'fagner.png'),
+    (6,  'Kaiki', 'Lateral', 1, 'kaiki.png'),
+    (7,  'Kauã Moraes', 'Lateral', 1, 'kaua-moraes.png'),
+    (8,  'Kauã Prates', 'Lateral', 1, 'kaua-prates.png'),
 
-INSERT INTO jogador (nome, posicao, clube_id, foto)
-SELECT
-    dados.nome,
-    dados.posicao,
-    c.id,
-    dados.foto
-FROM (
-    VALUES
-        -- Goleiros
-        ('Cássio', 'Goleiro', 'cassio.png'),
-        ('Matheus Cunha', 'Goleiro', 'matheus-cunha.png'),
-        ('Otávio', 'Goleiro', 'otavio.png'),
+    -- Zagueiros
+    (9,  'Fabrício Bruno', 'Zagueiro', 1, 'fabricio-bruno.png'),
+    (10, 'João Marcelo', 'Zagueiro', 1, 'joao-marcelo.png'),
+    (11, 'Jonathan Jesus', 'Zagueiro', 1, 'jonathan-jesus.png'),
+    (12, 'Lucas Villalba', 'Zagueiro', 1, 'lucas-villalba.png'),
+    (13, 'Bruno Alves', 'Zagueiro', 1, 'bruno-alves.png'),
+    (14, 'Janderson', 'Zagueiro', 1, 'janderson.png'),
 
-        -- Laterais
-        ('William', 'Lateral', 'william.png'),
-        ('Fagner', 'Lateral', 'fagner.png'),
-        ('Kaiki', 'Lateral', 'kaiki.png'),
-        ('Kauã Moraes', 'Lateral', 'kaua-moraes.png'),
-        ('Kauã Prates', 'Lateral', 'kaua-prates.png'),
+    -- Volantes
+    (15, 'Lucas Romero', 'Volante', 1, 'lucas-romero.png'),
+    (16, 'Lucas Silva', 'Volante', 1, 'lucas-silva.png'),
+    (17, 'Matheus Henrique', 'Volante', 1, 'matheus-henrique.png'),
+    (18, 'Christian', 'Volante', 1, 'christian.png'),
 
-        -- Zagueiros
-        ('Fabrício Bruno', 'Zagueiro', 'fabricio-bruno.png'),
-        ('João Marcelo', 'Zagueiro', 'joao-marcelo.png'),
-        ('Jonathan Jesus', 'Zagueiro', 'jonathan-jesus.png'),
-        ('Lucas Villalba', 'Zagueiro', 'lucas-villalba.png'),
-        ('Bruno Alves', 'Zagueiro', 'bruno-alves.png'),
-        ('Janderson', 'Zagueiro', 'janderson.png'),
+    -- Meias
+    (19, 'Matheus Pereira', 'Meia', 1, 'matheus-pereira.png'),
+    (20, 'Gerson', 'Meia', 1, 'gerson.png'),
+    (21, 'Japa', 'Meia', 1, 'japa.png'),
+    (22, 'Rodriguinho', 'Meia', 1, 'rodriguinho.png'),
+    (23, 'Vitinho', 'Meia', 1, 'vitinho.png'),
+    (24, 'Ryan Guilherme', 'Meia', 1, 'ryan-guilherme.png'),
 
-        -- Volantes
-        ('Lucas Romero', 'Volante', 'lucas-romero.png'),
-        ('Lucas Silva', 'Volante', 'lucas-silva.png'),
-        ('Matheus Henrique', 'Volante', 'matheus-henrique.png'),
-        ('Christian', 'Volante', 'christian.png'),
+    -- Atacantes
+    (25, 'Kaio Jorge', 'Atacante', 1, 'kaio-jorge.png'),
+    (26, 'Wanderson', 'Atacante', 1, 'wanderson.png'),
+    (27, 'Marquinhos', 'Atacante', 1, 'marquinhos.png'),
+    (28, 'Chico da Costa', 'Atacante', 1, 'chico-da-costa.png'),
+    (29, 'Néiser Villarreal', 'Atacante', 1, 'neiser-villarreal.png'),
+    (30, 'Kaique Kenji', 'Atacante', 1, 'kaique-kenji.png'),
+    (31, 'Keny Arroyo', 'Atacante', 1, 'keny-arroyo.png')
+ON CONFLICT (id) DO NOTHING;
 
-        -- Meias
-        ('Matheus Pereira', 'Meia', 'matheus-pereira.png'),
-        ('Gerson', 'Meia', 'gerson.png'),
-        ('Japa', 'Meia', 'japa.png'),
-        ('Rodriguinho', 'Meia', 'rodriguinho.png'),
-        ('Vitinho', 'Meia', 'vitinho.png'),
-        ('Ryan Guilherme', 'Meia', 'ryan-guilherme.png'),
+-- Jogadores do Atlético Mineiro (IDs 32 a 57)
+INSERT INTO jogador (id, nome, posicao, clube_id, foto) VALUES
+    -- Goleiros
+    (32, 'Everson', 'Goleiro', 2, 'everson.png'),
+    (33, 'Gabriel Delfim', 'Goleiro', 2, 'gabriel-delfim.png'),
+    (34, 'Robert', 'Goleiro', 2, 'robert.png'),
 
-        -- Atacantes
-        ('Kaio Jorge', 'Atacante', 'kaio-jorge.png'),
-        ('Wanderson', 'Atacante', 'wanderson.png'),
-        ('Marquinhos', 'Atacante', 'marquinhos.png'),
-        ('Chico da Costa', 'Atacante', 'chico-da-costa.png'),
-        ('Néiser Villarreal', 'Atacante', 'neiser-villarreal.png'),
-        ('Kaique Kenji', 'Atacante', 'kaique-kenji.png'),
-        ('Keny Arroyo', 'Atacante', 'keny-arroyo.png')
-) AS dados(nome, posicao, foto)
-JOIN clube c
-    ON c.nome = 'Cruzeiro'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM jogador j
-    WHERE j.nome = dados.nome
-      AND j.clube_id = c.id
-);
+    -- Laterais
+    (35, 'Saravia', 'Lateral', 2, 'saravia.png'),
+    (36, 'Natanael', 'Lateral', 2, 'natanael.png'),
+    (37, 'Guilherme Arana', 'Lateral', 2, 'guilherme-arana.png'),
+    (38, 'Caio', 'Lateral', 2, 'caio.png'),
 
+    -- Zagueiros
+    (39, 'Junior Alonso', 'Zagueiro', 2, 'junior-alonso.png'),
+    (40, 'Lyanco', 'Zagueiro', 2, 'lyanco.png'),
+    (41, 'Vitor Hugo', 'Zagueiro', 2, 'vitor-hugo.png'),
+    (42, 'Ivan Román', 'Zagueiro', 2, 'ivan-roman.png'),
 
+    -- Volantes
+    (43, 'Alan Franco', 'Volante', 2, 'alan-franco.png'),
+    (44, 'Fausto Vera', 'Volante', 2, 'fausto-vera.png'),
+    (45, 'Patrick Silva', 'Volante', 2, 'patrick-silva.png'),
+    (46, 'Gabriel Menino', 'Volante', 2, 'gabriel-menino.png'),
+    (47, 'Alexsander', 'Volante', 2, 'alexsander.png'),
 
+    -- Meias
+    (48, 'Gustavo Scarpa', 'Meia', 2, 'gustavo-scarpa.png'),
+    (49, 'Igor Gomes', 'Meia', 2, 'igor-gomes.png'),
+    (50, 'Bernard', 'Meia', 2, 'bernard.png'),
+    (51, 'Reinier', 'Meia', 2, 'reinier.png'),
 
-INSERT INTO clube (nome, informacao)
-SELECT 'Atlético Mineiro', 'Minas Gerais'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM clube
-    WHERE nome = 'Atlético Mineiro'
-);
+    -- Atacantes
+    (52, 'Hulk', 'Atacante', 2, 'hulk.png'),
+    (53, 'Cuello', 'Atacante', 2, 'cuello.png'),
+    (54, 'Dudu', 'Atacante', 2, 'dudu.png'),
+    (55, 'Biel', 'Atacante', 2, 'biel.png'),
+    (56, 'Cadu', 'Atacante', 2, 'cadu.png'),
+    (57, 'Caio Maia', 'Atacante', 2, 'caio-maia.png')
+ON CONFLICT (id) DO NOTHING;
 
-
-INSERT INTO jogador (nome, posicao, clube_id, foto)
-SELECT
-    dados.nome,
-    dados.posicao,
-    c.id,
-    dados.foto
-FROM (
-    VALUES
-        -- Goleiros
-        ('Everson', 'Goleiro', 'everson.png'),
-        ('Gabriel Delfim', 'Goleiro', 'gabriel-delfim.png'),
-        ('Robert', 'Goleiro', 'robert.png'),
-
-        -- Laterais
-        ('Saravia', 'Lateral', 'saravia.png'),
-        ('Natanael', 'Lateral', 'natanael.png'),
-        ('Guilherme Arana', 'Lateral', 'guilherme-arana.png'),
-        ('Caio', 'Lateral', 'caio.png'),
-
-        -- Zagueiros
-        ('Junior Alonso', 'Zagueiro', 'junior-alonso.png'),
-        ('Lyanco', 'Zagueiro', 'lyanco.png'),
-        ('Vitor Hugo', 'Zagueiro', 'vitor-hugo.png'),
-        ('Ivan Román', 'Zagueiro', 'ivan-roman.png'),
-
-        -- Volantes
-        ('Alan Franco', 'Volante', 'alan-franco.png'),
-        ('Fausto Vera', 'Volante', 'fausto-vera.png'),
-        ('Patrick Silva', 'Volante', 'patrick-silva.png'),
-        ('Gabriel Menino', 'Volante', 'gabriel-menino.png'),
-        ('Alexsander', 'Volante', 'alexsander.png'),
-
-        -- Meias
-        ('Gustavo Scarpa', 'Meia', 'gustavo-scarpa.png'),
-        ('Igor Gomes', 'Meia', 'igor-gomes.png'),
-        ('Bernard', 'Meia', 'bernard.png'),
-        ('Reinier', 'Meia', 'reinier.png'),
-
-        -- Atacantes
-        ('Hulk', 'Atacante', 'hulk.png'),
-        ('Cuello', 'Atacante', 'cuello.png'),
-        ('Dudu', 'Atacante', 'dudu.png'),
-        ('Biel', 'Atacante', 'biel.png'),
-        ('Cadu', 'Atacante', 'cadu.png'),
-        ('Caio Maia', 'Atacante', 'caio-maia.png')
-) AS dados(nome, posicao, foto)
-JOIN clube c
-    ON c.nome = 'Atlético Mineiro'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM jogador j
-    WHERE j.nome = dados.nome
-      AND j.clube_id = c.id
-);
+-- Ajusta as sequences para os próximos INSERTs automáticos não colidirem
+SELECT setval(pg_get_serial_sequence('clube', 'id'),   (SELECT MAX(id) FROM clube));
+SELECT setval(pg_get_serial_sequence('jogador', 'id'), (SELECT MAX(id) FROM jogador));

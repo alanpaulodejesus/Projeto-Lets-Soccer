@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "escalacao")
+@Table(name = "escalacao", uniqueConstraints = @UniqueConstraint(columnNames = {"usuario_id", "clube_id"}))
 public class EscalacaoEntity {
 
     @Id
@@ -19,6 +19,10 @@ public class EscalacaoEntity {
     @ManyToOne
     @JoinColumn(name = "clube_id", nullable = false)
     private ClubeEntity clube;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private UsuarioEntity usuario;
 
     @ManyToMany
     @JoinTable(
@@ -36,39 +40,20 @@ public class EscalacaoEntity {
         this.dataCriacao = LocalDateTime.now();
     }
 
-    public Integer getId() {
-        return id;
-    }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public String getEsquema() { return esquema; }
+    public void setEsquema(String esquema) { this.esquema = esquema; }
 
-    public String getEsquema() {
-        return esquema;
-    }
+    public ClubeEntity getClube() { return clube; }
+    public void setClube(ClubeEntity clube) { this.clube = clube; }
 
-    public void setEsquema(String esquema) {
-        this.esquema = esquema;
-    }
+    public UsuarioEntity getUsuario() { return usuario; }
+    public void setUsuario(UsuarioEntity usuario) { this.usuario = usuario; }
 
-    public ClubeEntity getClube() {
-        return clube;
-    }
+    public List<JogadorEntity> getJogadores() { return jogadores; }
+    public void setJogadores(List<JogadorEntity> jogadores) { this.jogadores = jogadores; }
 
-    public void setClube(ClubeEntity clube) {
-        this.clube = clube;
-    }
-
-    public List<JogadorEntity> getJogadores() {
-        return jogadores;
-    }
-
-    public void setJogadores(List<JogadorEntity> jogadores) {
-        this.jogadores = jogadores;
-    }
-
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
+    public LocalDateTime getDataCriacao() { return dataCriacao; }
 }

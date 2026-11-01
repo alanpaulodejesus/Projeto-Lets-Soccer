@@ -3,38 +3,47 @@ package com.letssoccer.letssoccer.service;
 import com.letssoccer.letssoccer.dto.EsquemaTaticoRequestDto;
 import com.letssoccer.letssoccer.entities.ClubeEntity;
 import com.letssoccer.letssoccer.entities.EsquemaTaticoEntity;
+import com.letssoccer.letssoccer.entities.UsuarioEntity;
 import com.letssoccer.letssoccer.messages.exception.BadRequestException;
 import com.letssoccer.letssoccer.messages.exception.KeyMessages;
 import com.letssoccer.letssoccer.messages.exception.NotFoundException;
 import com.letssoccer.letssoccer.repositories.ClubeRepository;
 import com.letssoccer.letssoccer.repositories.EsquemaTaticoRepository;
+import com.letssoccer.letssoccer.repositories.UsuarioRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EsquemaTaticoService {
 
     private final ClubeRepository clubeRepository;
     private final EsquemaTaticoRepository esquemaRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public EsquemaTaticoService(
-            ClubeRepository clubeRepository,
-            EsquemaTaticoRepository esquemaRepository) {
+    public EsquemaTaticoService(ClubeRepository clubeRepository,
+                                EsquemaTaticoRepository esquemaRepository,
+                                UsuarioRepository usuarioRepository) {
         this.clubeRepository = clubeRepository;
         this.esquemaRepository = esquemaRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
-    public String definirEsquema(Integer clubeId, EsquemaTaticoRequestDto dto) {
+    @Transactional
+    public String definirEsquema(Integer clubeId, String email, EsquemaTaticoRequestDto dto) {
+
+        UsuarioEntity usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
 
         ClubeEntity clube = clubeRepository.findById(clubeId)
-                .orElseThrow(() ->
-                        new NotFoundException(KeyMessages.CLUBE_NAO_ENCONTRADO));
+                .orElseThrow(() -> new NotFoundException(KeyMessages.CLUBE_NAO_ENCONTRADO));
 
         String esquemaSelecionado = obterEsquemaSelecionado(dto);
 
         EsquemaTaticoEntity esquema = esquemaRepository
-                .findByClubeId(clubeId)
-                .orElse(new EsquemaTaticoEntity());
+                .findByClubeIdAndUsuarioEmail(clubeId, email)
+                .orElseGet(EsquemaTaticoEntity::new);
 
+        esquema.setUsuario(usuario);
         esquema.setClube(clube);
         esquema.setEsquema442(dto.esquema442());
         esquema.setEsquema352(dto.esquema352());
