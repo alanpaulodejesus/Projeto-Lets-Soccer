@@ -238,9 +238,18 @@ data.id===1
 containerTimes.style.display="none";
 textoEscolha.style.display="none";
 
-// nenhuma chamada de escalação aqui:
-// o GET só acontece depois que a escalação for salva
+if(data.possuiEscalacao){
+
+// já escalou: mostra o time salvo (GET) e não permite nova escalação
+btnEsquema.style.display="none";
+carregarEscalacaoSalva();
+
+}else{
+
+// ainda não escalou: só o botão, sem chamar o GET da escalação
 btnEsquema.style.display="inline-block";
+
+}
 
 });
 
@@ -295,8 +304,10 @@ setTimeout(
 
 /* ---------- BUSCAR ESCALACAO SALVA (GET) ---------- */
 
-// chamada depois que a escalação foi salva (POST 200)
-// ou quando o POST avisa que ela já existe (409)
+// chamada em 3 situações:
+// 1) ao abrir a página, se o usuário já escalou (possuiEscalacao=true)
+// 2) logo depois de salvar a escalação (POST 200)
+// 3) quando o POST avisa que a escalação já existe (409)
 // fallbackData: resposta do POST, usada só se o GET falhar
 function carregarEscalacaoSalva(fallbackData){
 
@@ -712,7 +723,7 @@ html:data.mensagem||"Escalação salva com sucesso!",
 classes:"green darken-2"
 });
 
-// escalação salva: agora sim busca no GET e exibe
+// escalação salva: busca no GET e exibe
 carregarEscalacaoSalva(data);
 
 })
