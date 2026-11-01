@@ -857,6 +857,11 @@ document.getElementById(
 "escalacaoSalva"
 );
 
+const info=
+document.getElementById(
+"infoEscalacao"
+);
+
 const esquema=
 normalizarEsquema(
 data.esquema||esquemaAtual
@@ -865,7 +870,8 @@ data.esquema||esquemaAtual
 const rotulo=
 esquema.split("").join("-");
 
-container.innerHTML=`
+// painel da esquerda
+info.innerHTML=`
 
 <h5 class='center'>
 Escalação salva
@@ -875,6 +881,11 @@ Escalação salva
 Esquema:
 <strong>${rotulo}</strong>
 </p>
+
+`;
+
+// área da direita: só o campo
+container.innerHTML=`
 
 <div id='campoSalvo' class='campo-salvo'></div>
 
@@ -927,8 +938,7 @@ campo.appendChild(div);
 function mostrarClube(nome,escudo){
 
 clubeSelecionadoDiv.innerHTML=`
-<div class='center'
-style='margin-top:20px'>
+<div class='center'>
 
 <img src='${escudo}'
 width='80'>

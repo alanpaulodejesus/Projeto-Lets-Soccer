@@ -2,6 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lets Soccer</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
@@ -24,6 +25,64 @@ position:relative;
 position:absolute;
 left:20px;
 top:20px;
+}
+
+/* LAYOUT: painel à esquerda, campo à direita */
+.layout{
+display:flex;
+gap:30px;
+align-items:flex-start;
+justify-content:center;
+max-width:1000px;
+margin:20px auto;
+padding:0 15px;
+}
+
+.painel-lateral{
+flex:0 0 260px;
+text-align:center;
+position:sticky;
+top:20px;
+}
+
+.painel-lateral .btn{
+margin:6px 0;
+}
+
+#infoEscalacao h5{
+margin:20px 0 6px;
+}
+
+#infoEscalacao p{
+margin:0;
+}
+
+.area-campo{
+flex:1 1 500px;
+max-width:500px;
+min-width:0;
+}
+
+.area-campo:empty{
+display:none;
+}
+
+@media (max-width:700px){
+
+.layout{
+flex-direction:column;
+align-items:stretch;
+}
+
+.painel-lateral{
+flex:none;
+position:static;
+}
+
+.area-campo{
+max-width:100%;
+}
+
 }
 
 #campoFutebol,
@@ -150,7 +209,7 @@ background:#f2f2f2;
 
 /* ESCALACAO SALVA */
 #escalacaoSalva{
-margin-top:30px;
+margin-top:0;
 }
 
 .campo-salvo{
@@ -173,11 +232,7 @@ margin-bottom:30px;
 </div>
 
 
-<div class="container">
-    <div id="clubeSelecionado"></div>
-</div>
-
-
+<!-- ESCOLHA DO TIME (some depois que o clube é definido) -->
 <div class="container">
 
     <div class="row" id="listaTimes">
@@ -229,33 +284,46 @@ margin-bottom:30px;
 
     </div>
 
+</div>
 
-    <div class="center" style="margin-top:20px;">
 
-        <a
-                id="btnEsquema"
-                class="btn modal-trigger green"
-                href="#modalEsquema">
+<!-- PAINEL À ESQUERDA + CAMPO À DIREITA -->
+<div class="layout">
 
-            Escolher Esquema Tático
+    <aside class="painel-lateral">
 
-        </a>
+        <div id="clubeSelecionado"></div>
 
-        <a
-                id="btnEditar"
-                class="btn orange"
-                href="#!"
-                style="display:none;">
+        <div class="acoes">
 
-            Editar Escalação
+            <a
+                    id="btnEsquema"
+                    class="btn modal-trigger green"
+                    href="#modalEsquema">
 
-        </a>
+                Escolher Esquema Tático
 
-    </div>
+            </a>
 
-    <div id="mensagem"></div>
+            <a
+                    id="btnEditar"
+                    class="btn orange"
+                    href="#!"
+                    style="display:none;">
 
-    <div id="escalacaoSalva"></div>
+                Editar Escalação
+
+            </a>
+
+        </div>
+
+        <div id="mensagem"></div>
+
+        <div id="infoEscalacao"></div>
+
+    </aside>
+
+    <section id="escalacaoSalva" class="area-campo"></section>
 
 </div>
 
