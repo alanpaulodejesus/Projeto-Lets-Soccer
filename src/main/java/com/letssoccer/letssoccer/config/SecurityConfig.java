@@ -66,6 +66,8 @@ public class SecurityConfig {
                         .hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/clube/{id}/escalacao")
                         .hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/clube/{id}/escalacao")
+                        .hasAnyRole("USER", "ADMIN")
                         // ADMIN
                         //.requestMatchers("/clubes/**").hasRole("ADMIN")
 

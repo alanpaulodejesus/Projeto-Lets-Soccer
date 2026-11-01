@@ -37,6 +37,21 @@ public class EscalacaoController {
         );
     }
 
+    @PutMapping("/{id}/escalacao")
+    public ResponseEntity<EscalacaoResponseDto> atualizarEscalacao(
+            @PathVariable Integer id,
+            @RequestParam String esquema,
+            @RequestBody @Valid EscalacaoRequestDto dto,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        List<JogadorResponseDto> jogadores =
+                escalacaoService.atualizarEscalacao(id, esquema, dto, userDetails.getUsername());
+
+        return ResponseEntity.ok(
+                new EscalacaoResponseDto("Escalação atualizada com sucesso!", esquema, jogadores)
+        );
+    }
+
     @GetMapping("/{id}/escalacao")
     public ResponseEntity<EscalacaoResponseDto> buscarEscalacao(
             @PathVariable Integer id,

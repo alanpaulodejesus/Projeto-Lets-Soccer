@@ -17,7 +17,12 @@ import com.letssoccer.letssoccer.repositories.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,11 +53,57 @@ public class EscalacaoService {
         ClubeEntity clube = clubeRepository.findById(clubeId)
                 .orElseThrow(() -> new NotFoundException(KeyMessages.CLUBE_NAO_ENCONTRADO));
 
-        List<Integer> jogadoresIds = dto.getJogadoresIds();
-
         if (escalacaoRepository.existsByClubeIdAndUsuarioEmail(clubeId, email)) {
             throw new BadRequestException("Você já possui uma escalação salva para o clube");
         }
+
+        List<JogadorEntity> ordenados = validarEOrdenarJogadores(clubeId, dto);
+
+        EscalacaoEntity escalacao = new EscalacaoEntity();
+        escalacao.setUsuario(usuario);
+        escalacao.setClube(clube);
+        escalacao.setEsquema(esquema);
+        escalacao.setJogadores(ordenados);
+
+        EscalacaoEntity salva = escalacaoRepository.save(escalacao);
+
+        return toJogadoresDto(salva);
+    }
+
+    @Transactional
+    public List<JogadorResponseDto> atualizarEscalacao(Integer clubeId, String esquema,
+                                                       EscalacaoRequestDto dto, String email) {
+
+        EscalacaoEntity escalacao = escalacaoRepository
+                .findTopByClubeIdAndUsuarioEmailOrderByDataCriacaoDesc(clubeId, email)
+                .orElseThrow(() -> new NotFoundException("Você ainda não possui escalação para editar"));
+
+        List<JogadorEntity> ordenados = validarEOrdenarJogadores(clubeId, dto);
+
+        escalacao.setEsquema(esquema);
+        escalacao.setJogadores(new ArrayList<>(ordenados));
+
+        EscalacaoEntity atualizada = escalacaoRepository.save(escalacao);
+
+        return toJogadoresDto(atualizada);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<EscalacaoResponseDto> buscarEscalacao(Integer clubeId, String email) {
+
+        return escalacaoRepository
+                .findTopByClubeIdAndUsuarioEmailOrderByDataCriacaoDesc(clubeId, email)
+                .map(e -> new EscalacaoResponseDto(
+                        "Escalação encontrada",
+                        e.getEsquema(),
+                        toJogadoresDto(e)
+                ));
+    }
+
+    // validações comuns ao salvar e ao atualizar; devolve os jogadores na ordem escolhida
+    private List<JogadorEntity> validarEOrdenarJogadores(Integer clubeId, EscalacaoRequestDto dto) {
+
+        List<Integer> jogadoresIds = dto.getJogadoresIds();
 
         if (jogadoresIds == null || jogadoresIds.size() != 11) {
             throw new BadRequestException("A escalação deve conter exatamente 11 jogadores");
@@ -77,31 +128,9 @@ public class EscalacaoService {
         Map<Integer, JogadorEntity> porId = jogadores.stream()
                 .collect(Collectors.toMap(JogadorEntity::getId, j -> j));
 
-        List<JogadorEntity> ordenados = jogadoresIds.stream()
+        return jogadoresIds.stream()
                 .map(porId::get)
                 .toList();
-
-        EscalacaoEntity escalacao = new EscalacaoEntity();
-        escalacao.setUsuario(usuario);
-        escalacao.setClube(clube);
-        escalacao.setEsquema(esquema);
-        escalacao.setJogadores(ordenados);
-
-        EscalacaoEntity salva = escalacaoRepository.save(escalacao);
-
-        return toJogadoresDto(salva);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<EscalacaoResponseDto> buscarEscalacao(Integer clubeId, String email) {
-
-        return escalacaoRepository
-                .findTopByClubeIdAndUsuarioEmailOrderByDataCriacaoDesc(clubeId, email)
-                .map(e -> new EscalacaoResponseDto(
-                        "Escalação encontrada",
-                        e.getEsquema(),
-                        toJogadoresDto(e)
-                ));
     }
 
     private List<JogadorResponseDto> toJogadoresDto(EscalacaoEntity escalacao) {

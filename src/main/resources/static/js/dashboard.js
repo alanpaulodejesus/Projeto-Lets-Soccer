@@ -6,6 +6,7 @@ const containerTimes=document.getElementById("listaTimes");
 const clubeSelecionadoDiv=document.getElementById("clubeSelecionado");
 const textoEscolha=document.getElementById("textoEscolha");
 const btnEsquema=document.getElementById("btnEsquema");
+const btnEditar=document.getElementById("btnEditar");
 
 const modalEsquemaEl=document.getElementById("modalEsquema");
 const modalJogadoresEl=document.getElementById("modalJogadores");
@@ -43,7 +44,12 @@ let esquemaAtual=null;
 let jogadoresTime=[];
 let jogadoresSelecionados=[];
 
+// escalação já salva (resposta do GET) e modo de edição
+let escalacaoAtual=null;
+let modoEdicao=false;
+
 btnEsquema.style.display="none";
+btnEditar.style.display="none";
 
 modalEsquemaEl.style.display="none";
 modalJogadoresEl.style.display="none";
@@ -239,8 +245,8 @@ containerTimes.style.display="none";
 textoEscolha.style.display="none";
 
 // GET /clube/{id}/escalacao:
-// 200 => mostra o time salvo e esconde o botão
-// 204 => ainda não escalou, mostra o botão
+// 200 => mostra o time salvo e o botão Editar
+// 204 => ainda não escalou, mostra o botão Escolher Esquema
 carregarEscalacaoSalva();
 
 });
@@ -294,13 +300,58 @@ setTimeout(
 
 
 
+/* ---------- BOTOES: NOVA ESCALACAO / EDITAR ---------- */
+
+btnEsquema.addEventListener("click",()=>{
+
+modoEdicao=false;
+mensagemModal.innerHTML="";
+
+});
+
+
+btnEditar.addEventListener("click",()=>{
+
+modoEdicao=true;
+mensagemModal.innerHTML="";
+
+// já deixa marcado o esquema atual da escalação
+if(escalacaoAtual){
+
+const radio=document.querySelector(
+`input[name="esquema"][value="${normalizarEsquema(escalacaoAtual.esquema)}"]`
+);
+
+if(radio) radio.checked=true;
+
+}
+
+M.Modal.getInstance(modalEsquemaEl).open();
+
+});
+
+
+
 /* ---------- BUSCAR ESCALACAO SALVA (GET /clube/{id}/escalacao) ---------- */
+
+// mostra o time salvo, guarda os dados para edição e troca os botões
+function mostrarEscalacao(data){
+
+escalacaoAtual=data;
+
+btnEsquema.style.display="none";
+btnEditar.style.display="inline-block";
+
+exibirEscalacaoSalva(data);
+
+}
+
 
 // chamada em 3 situações:
 // 1) ao abrir a página (200 = já escalou, 204 = ainda não)
-// 2) logo depois de salvar a escalação (POST 200)
+// 2) logo depois de salvar ou atualizar a escalação
 // 3) quando o POST avisa que a escalação já existe
-// fallbackData: resposta do POST, usada só se o GET falhar
+// fallbackData: resposta do POST/PUT, usada só se o GET falhar
 function carregarEscalacaoSalva(fallbackData){
 
 return fetch(`/clube/${clubeId}/escalacao`,{
@@ -325,23 +376,18 @@ return r.json();
 .then(data=>{
 
 if(data){
-
-// já escalou: mostra o time salvo e não permite nova escalação
-btnEsquema.style.display="none";
-exibirEscalacaoSalva(data);
+mostrarEscalacao(data);
 return;
-
 }
 
 if(fallbackData){
-
-btnEsquema.style.display="none";
-exibirEscalacaoSalva(fallbackData);
+mostrarEscalacao(fallbackData);
 return;
-
 }
 
-// não existe escalação: libera o botão
+// não existe escalação: libera o botão de criar
+escalacaoAtual=null;
+btnEditar.style.display="none";
 btnEsquema.style.display="inline-block";
 
 })
@@ -349,17 +395,20 @@ btnEsquema.style.display="inline-block";
 
 if(fallbackData){
 
-// o POST já tinha dado certo: mostra o que ele devolveu
-btnEsquema.style.display="none";
-exibirEscalacaoSalva(fallbackData);
+// o POST/PUT já tinha dado certo: mostra o que ele devolveu
+mostrarEscalacao(fallbackData);
 return;
 
 }
 
 mostrarMensagem(e.message,"red");
 
-// não bloqueia o fluxo; o backend barra duplicidade
+// não bloqueia o fluxo; o backend valida duplicidade
+if(escalacaoAtual){
+btnEditar.style.display="inline-block";
+}else{
 btnEsquema.style.display="inline-block";
+}
 
 });
 
@@ -453,7 +502,44 @@ e.message;
 
 
 
-/* ---------- MONTAR ESCALACAO ---------- */
+/* ---------- MONTAR / EDITAR ESCALACAO ---------- */
+
+// preenche um slot do campo com o jogador escolhido
+function preencherSlot(slot,j){
+
+jogadoresSelecionados=
+jogadoresSelecionados.filter(
+x=>x.slot!==slot
+);
+
+jogadoresSelecionados.push({
+slot:slot,
+id:j.id
+});
+
+document.getElementById(
+`nome-${slot}`
+).innerText=j.nome;
+
+document.getElementById(
+`slot-${slot}`
+).innerHTML=`
+
+<img
+class='jogador-foto'
+src='${montarFotoJogador(j.nome)}'
+onerror="this.src='/img/jogadores/default.png'">
+
+`;
+
+document.querySelectorAll(
+"#campoFutebol .posicao"
+)[slot].classList.add(
+"ocupada"
+);
+
+}
+
 
 function abrirModalJogadores(){
 
@@ -550,6 +636,24 @@ campo.appendChild(div);
 
 });
 
+// edição com o mesmo esquema: já vem com os 11 jogadores salvos.
+// se o esquema mudou, as posições são outras e o campo começa vazio.
+if(
+modoEdicao
+&& escalacaoAtual
+&& normalizarEsquema(escalacaoAtual.esquema)===esquemaAtual
+){
+
+(escalacaoAtual.jogadores||[]).forEach((salvo,i)=>{
+
+const j=jogadoresTime.find(x=>x.id===salvo.id);
+
+if(j) preencherSlot(i,j);
+
+});
+
+}
+
 })
 .catch(e=>{
 
@@ -623,39 +727,7 @@ ${j.posicao}
 
 item.onclick=function(){
 
-jogadoresSelecionados=
-jogadoresSelecionados.filter(
-x=>x.slot!==slot
-);
-
-jogadoresSelecionados.push({
-slot:slot,
-id:j.id
-});
-
-
-document.getElementById(
-`nome-${slot}`
-).innerText=j.nome;
-
-
-document.getElementById(
-`slot-${slot}`
-).innerHTML=`
-
-<img
-class='jogador-foto'
-src='${montarFotoJogador(j.nome)}'
-onerror="this.src='/img/jogadores/default.png'">
-
-`;
-
-document.querySelectorAll(
-"#campoFutebol .posicao"
-)[slot].classList.add(
-"ocupada"
-);
-
+preencherSlot(slot,j);
 
 M.Modal
 .getInstance(
@@ -693,10 +765,15 @@ return;
 
 }
 
+// edição: PUT na escalação existente; nova: POST
+const url=modoEdicao
+?`/clube/${clubeId}/escalacao?esquema=${esquemaAtual}`
+:`/clube/${clubeId}/escalacoes?esquema=${esquemaAtual}`;
+
 fetch(
-`/clube/${clubeId}/escalacoes?esquema=${esquemaAtual}`,
+url,
 {
-method:"POST",
+method:modoEdicao?"PUT":"POST",
 
 headers:{
 "Content-Type":"application/json",
@@ -737,23 +814,25 @@ html:data.mensagem||"Escalação salva com sucesso!",
 classes:"green darken-2"
 });
 
-// escalação salva: busca no GET e exibe
+modoEdicao=false;
+
+// escalação salva/atualizada: busca no GET e exibe
 carregarEscalacaoSalva(data);
 
 })
 .catch(e=>{
 
-// escalação já existe (409, ou 400 com a mensagem do backend)
-if(e.status===409 || /já possui/i.test(e.message)){
+// tentou criar, mas a escalação já existe: passa a mostrar a salva
+if(!modoEdicao && (e.status===409 || /já possui/i.test(e.message))){
 
 M.Modal.getInstance(modalJogadoresEl).close();
 
 M.toast({
-html:e.message,
+html:"Você já possui uma escalação. Use o botão Editar para alterá-la.",
 classes:"orange darken-2"
 });
 
-carregarEscalacaoSalva();   // mostra a que já está salva
+carregarEscalacaoSalva();
 return;
 
 }
